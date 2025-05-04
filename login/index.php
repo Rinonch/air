@@ -265,7 +265,7 @@ $level = $dt_user[2];
                                 }
                             } elseif ($t == "user_edit") {
                                 $user = $_POST['username'];
-                                $password = $_POST['password'];
+                                $password = $_POST['password']; // Password baru dari input
                                 $nama = $_POST['nama'];
                                 $alamat = $_POST['alamat'];
                                 $kota = $_POST['kota'];
@@ -274,17 +274,45 @@ $level = $dt_user[2];
                                 $tipe = $_POST['tipe'];
                                 $status = $_POST['status'];
 
-                                // Update ke database
-                                $update = mysqli_query($koneksi, "UPDATE user SET password='$password', nama='$nama', alamat='$alamat', kota='$kota', telp='$telp', level='$level', tipe='$tipe', status='$status' WHERE username='$user'");
-                                if ($update) {
+                                // Cek password yang ada di tabel user
+                                $qcp = mysqli_query($koneksi, "SELECT password FROM user WHERE username='$user'");
+                                $dcp = mysqli_fetch_row($qcp);
+                                $pass_db = $dcp[0]; // Password lama dari database
+
+                                if (password_verify($password, $pass_db)) {
+                                    // Tidak ada perubahan password
+                                    $update = mysqli_query($koneksi, "UPDATE user SET nama='$nama', alamat='$alamat', kota='$kota', telp='$telp', level='$level', tipe='$tipe', status='$status' WHERE username='$user'");
+                                } else {
+                                    // Ada perubahan password
+                                    $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+                                    $update = mysqli_query($koneksi, "UPDATE user SET password='$password_hashed', nama='$nama', alamat='$alamat', kota='$kota', telp='$telp', level='$level', tipe='$tipe', status='$status' WHERE username='$user'");
+                                }
+
+                                // Cek apakah query berhasil dan ada perubahan data
+                                if ($update && mysqli_affected_rows($koneksi) > 0) {
                                     echo "<div class='alert alert-success alert-dismissible fade show'>
                                             <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
                                             <strong>Data</strong> berhasil diubah.
                                         </div>";
                                 } else {
+                                    echo "<div class='alert alert-primary alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> tidak ada perubahan.
+                                        </div>";
+                                }
+                            } elseif ($t == "user_hapus") {
+                                $user = $_POST['username'];
+                                // Hapus data user
+                                $delete = mysqli_query($koneksi, "DELETE FROM user WHERE username='$user'");
+                                if ($delete) {
+                                    echo "<div class='alert alert-success alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> berhasil dihapus.
+                                        </div>";
+                                } else {
                                     echo "<div class='alert alert-danger alert-dismissible fade show'>
                                             <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
-                                            <strong>Error:</strong> Gagal mengubah data.
+                                            <strong>Data</strong> Gagal menghapus data.
                                         </div>";
                                 }
                             }
@@ -296,7 +324,8 @@ $level = $dt_user[2];
                                 // echo "masuk sini untuk edit: $user";
                                 $q = mysqli_query($koneksi, "SELECT password, nama, alamat, kota, telp, level, tipe, status FROM user WHERE username='$user'");
                                 $d = mysqli_fetch_row($q);
-                                $pass2 = $d[0];
+                                $password = $d[0];
+                                $pass2 = password_hash($password, PASSWORD_DEFAULT);
                                 $nama = $d[1];
                                 $alamat = $d[2];
                                 $kota = $d[3];
@@ -320,7 +349,7 @@ $level = $dt_user[2];
                                 </div>
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password:</label>
-                                    <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" value="<?php echo $pass2 ?>" required>
+                                    <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" value="<?php echo $password ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama" class="form-label">Nama:</label>
@@ -384,6 +413,30 @@ $level = $dt_user[2];
                             </form>
                         </div>
                         </div>
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalLabel">Konfirmasi Hapus Data</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <!-- Modal Body -->
+                                    <div class="modal-body">
+                                        Apakah Anda yakin ingin menghapus user <strong id="modal-username"></strong>?
+                                    </div>
+                                    <!-- Modal Footer -->
+                                    <div class="modal-footer">
+                                        <form method="post">
+                                            <input type="hidden" name="username" id="modal-input-username">
+                                            <button type="submit" name="tombol" value="user_hapus" class="btn btn-danger">Ya</button>
+                                        </form>
+                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Tidak</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card mb-4" id="user_list">
                             <div class="card-header">
                                 <i class="fa-solid fa-users text-success fa-fade"></i>
@@ -428,8 +481,8 @@ $level = $dt_user[2];
                                             echo "<td>$tipe</td>";
                                             echo "<td>$status</td>";
                                             echo "<td>
-                                                    <a href=index.php?p=user_edit&user=$user><button type=button class='btn btn-outline-success'>Ubah</button></a>
-                                                    <button type=button class='btn btn-outline-danger'>Hapus</button>
+                                                    <a href=index.php?p=user_edit&user=$user><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
+                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#myModal' data-user=$user>Hapus</button>
                                                 </td>";
                                             echo "</tr>";
                                         }

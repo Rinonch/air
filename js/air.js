@@ -34,6 +34,14 @@ $(document).ready(function() {
             $("#user_add").show();
             $("#user_form input, #user_form textarea").val();
         });
+
+        // Membuat konfirmasi hapus dengan
+        $("button[data-bs-toggle='modal']").click(function() {
+            console.log("Tombol hapus diklik!");
+            user=$(this).attr("data-user");
+            $("#myModal .modal-body").text("Yakin hapus data username: "+user+" ?");
+            $(".modal-footer form").append("<input type='hidden' name='username' value="+user+">"); 
+        });
         
     }else {
         // diklik dashboard
