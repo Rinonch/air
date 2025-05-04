@@ -25,7 +25,7 @@ $koneksi = $air -> koneksi();
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Login - SB Admin</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="./css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="bg-primary">
@@ -40,41 +40,36 @@ $koneksi = $air -> koneksi();
                                     <div class="card-body">
                                         <?php
                                         if (isset($_POST['tombol'])) {
-                                            $username = isset($_POST['username']) ? $_POST['username'] : '';
+                                            $username = isset($_POST['username']) ? $_POST['username'] : ''; // Use 'username' instead of 'user'
                                             $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-                                            // Query untuk mengambil username, password, nama, alamat, kota, dan telepon
-                                            $qc = mysqli_query($koneksi, "SELECT username, password, nama, alamat, kota, telp, tipe, status FROM user WHERE username='$username'");
+                                            // Query to check if the user exists
+                                            $qc = mysqli_query($koneksi, "SELECT username, password FROM user WHERE username='$username'");
                                             if ($qc && mysqli_num_rows($qc) > 0) {
-                                                $dc = mysqli_fetch_assoc($qc); // Gunakan fetch_assoc untuk array asosiatif
+                                                $dc = mysqli_fetch_row($qc);
 
-                                                $user_cek = $dc['username'];
-                                                $pass_cek = $dc['password'];
-                                                $nama = $dc['nama']; // Ambil nama dari database
-                                                $alamat = $dc['alamat']; // Ambil alamat dari database
-                                                $kota = $dc['kota']; // Ambil kota dari database
-                                                $telp = $dc['telp']; // Ambil telepon dari database
-                                                $tipe = $dc['tipe']; // Ambil tipe dari database
-                                                $status = $dc['status']; // Ambil status dari database
+                                                if (!empty($dc[0])) $user_cek=$dc[0];
+                                                $user_cek = $dc[0];
 
-                                                if (password_verify($password, $pass_cek)) {
-                                                    // Simpan data ke session
-                                                    $_SESSION['user'] = $user_cek;
-                                                    $_SESSION['pass'] = $password;
-                                                    $_SESSION['nama'] = $nama; // Simpan nama ke session
-                                                    $_SESSION['alamat'] = $alamat; // Simpan alamat ke session
-                                                    $_SESSION['kota'] = $kota; // Simpan kota ke session
-                                                    $_SESSION['telp'] = $telp; // Simpan telepon ke session
-                                                    $_SESSION['tipe'] = $tipe; // Simpan tipe ke session
-                                                    $_SESSION['status'] = $status; // Simpan status ke session
+                                                if (!empty($user_cek)) {
+                                                    // Check if the password matches
+                                                    $pass_cek = $dc[1];
 
-                                                    // Redirect ke dashboard
-                                                    echo "<script>window.location.replace('./login/index.php')</script>";
-                                                } else {
-                                                    echo '<div class="alert alert-danger">Password salah!</div>';
+                                                    // Verifikasi
+                                                    if (password_verify($password, $pass_cek)) {
+                                                        // Daftar session
+                                                        $_SESSION['user'] = $username;
+                                                        $_SESSION['pass'] = $password;
+
+                                                        // Redirect ke dashboard 
+                                                        echo "<script>window.location.replace('./login/index.php')</script>";
+
+                                                    } else {
+                                                        echo '<div class="alert alert-danger alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert"></button><strong>Login!</strong> gagal</div>';
+                                                    }
                                                 }
                                             } else {
-                                                echo '<div class="alert alert-danger">Username tidak ditemukan!</div>';
+                                                echo '<div class="alert alert-danger alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert"></button><strong>Username!</strong> tidak ditemukan</div>';
                                             }
                                         }
                                         ?>
@@ -122,6 +117,6 @@ $koneksi = $air -> koneksi();
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
+        <script src="./js/scripts.js"></script>
     </body>
 </html>
