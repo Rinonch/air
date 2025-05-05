@@ -336,6 +336,83 @@ $level = $dt_user[2];
                             }
                         }
                         ?>
+                        <div class="card mb-4" id="tarif_add">
+                            <div class="card-header">
+                                <i class="fa-solid fa-user-plus text-success fa-fade"></i>
+                                Tarif
+                            </div>
+                            <div class="card-body">
+                            <form method="post" class="needs-validation" id="tarif_form">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username:</label>
+                                    <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" value="<?php echo $user ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password:</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" value="<?php echo $password ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nama" class="form-label">Nama:</label>
+                                    <input type="text" class="form-control" id="nama" placeholder="Enter nama" name="nama" value="<?php echo $nama?>" required>
+                                </div>
+                                <div class="mb-3">
+                                <label for="alamat">Alamat:</label>
+                                <textarea class="form-control" rows="5" id="alamat" name="alamat"><?php echo $alamat ?></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kota" class="form-label">Kota:</label>
+                                    <input type="text" class="form-control" id="kota" placeholder="Enter kota" name="kota" value="<?php echo $kota ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telp" class="form-label">Telepon:</label>
+                                    <input type="text" class="form-control" id="telp" placeholder="Enter telp" name="telp" value="<?php echo $telp ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="level" class="form-label">Level:</label>
+                                    <select class="form-select" name="level">
+                                        <option value="">Level</option>
+                                        <?php
+                                        $lv = array("admin", "bendahara", "petugas", "warga");
+                                        foreach ($lv as $lv2) {
+                                            if ($level == $lv2) $sel = "SELECTED";
+                                            else $sel = "";
+                                            echo "<option value=$lv2 $sel >"  . ucwords($lv2) . "</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tipe" class="form-label">Tipe:</label>
+                                    <select class="form-select" name="tipe">
+                                        <option value="">Tipe</option>
+                                        <?php
+                                        $t = array("RT", "Kos");
+                                        foreach ($t as $t2) {
+                                            if ($tipe == $t2) $sel = "SELECTED";
+                                            else $sel = "";
+                                            echo "<option value=$t2 $sel>"  . ucwords($t2) . "</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Status:</label>
+                                    <select class="form-select" name="status">
+                                        <option value="">Status</option>
+                                        <?php
+                                        $s = array("AKTIF", "TIDAK AKTIF");
+                                        foreach ($s as $s2) {
+                                            if ($status == $s2) $sel = "SELECTED";
+                                            else $sel = "";
+                                            echo "<option value='$s2' $sel>$s2</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" name="tombol" value="user_add">Simpan</button>
+                            </form>
+                        </div>
+                        </div>
                         <div class="card mb-4" id="user_add">
                             <div class="card-header">
                                 <i class="fa-solid fa-user-plus text-success fa-fade"></i>
@@ -483,6 +560,49 @@ $level = $dt_user[2];
                                             echo "<td>
                                                     <a href=index.php?p=user_edit&user=$user><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
                                                     <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#myModal' data-user=$user>Hapus</button>
+                                                </td>";
+                                            echo "</tr>";
+                                        }
+                                        
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card mb-4" id="tarif_list">
+                            <div class="card-header">
+                                <i class="fa-solid fa-users text-success fa-fade"></i>
+                                Data Tarif
+                            </div>
+                            <div class="card-body">
+                                <table id="tabel_tarif">
+                                    <thead>
+                                        <tr>
+                                            <th>ID Tarif</th>
+                                            <th>Tarif</th>
+                                            <th>Tipe</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <?php
+                                        $q = mysqli_query($koneksi, "SELECT kd_tarif, tarif, tipe, status FROM tarif ORDER BY kd_tarif ASC");
+                                        while ($d = mysqli_fetch_row($q)) {
+                                            $kd_tarif = $d[0];
+                                            $tarif = $d[1];
+                                            $tipe = $d[2];
+                                            $status = $d[3];
+
+                                            echo "<tr>";
+                                            echo "<td>$kd_tarif</td>";
+                                            echo "<td>$tarif</td>";
+                                            echo "<td>$tipe</td>";
+                                            echo "<td>$status</td>";
+                                            echo "<td>
+                                                    <a href=index.php?p=user_edit&kd_tarif=$kd_tarif><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
+                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#myModal' data-tarif=$kd_tarif>Hapus</button>
                                                 </td>";
                                             echo "</tr>";
                                         }
