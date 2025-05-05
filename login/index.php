@@ -152,7 +152,7 @@ $level = $dt_user[2];
                             } elseif ($e[1] == "pemakaian_warga") {
                                 $h1 = "Lihat Pemakaian Warga";
                                 $li = "Lihat Data Pemakaian Air Warga";
-                            } elseif ($e[1] == "pembayaran_warga") {
+                            } elseif ($e[1] == "pembayaran_warga" || $e[1] == "tarif_edit&kd_tarif") {
                                 $h1 = "Lihat Pembayaran Warga";
                                 $li = "Lihat Data Pembayaran Air Warga";
                             } elseif ($e[1] == "ubah_datameter_warga") {
@@ -315,6 +315,66 @@ $level = $dt_user[2];
                                             <strong>Data</strong> Gagal menghapus data.
                                         </div>";
                                 }
+                            } elseif ($t == "tarif_add") {
+                                $kd_tarif = $_POST['kd_tarif'];
+                                $tarif = $_POST['tarif'];
+                                $tipe = $_POST['tipe'];
+                                $status = $_POST['status'];
+
+                                // Periksa apakah ID Tarif sudah ada di database
+                                $qc = mysqli_query($koneksi, "SELECT kd_tarif FROM tarif WHERE kd_tarif='$kd_tarif'");
+                                if (mysqli_num_rows($qc) == 0) {
+                                    // Insert ke database tarif
+                                    $insert = mysqli_query($koneksi, "INSERT INTO tarif (kd_tarif, tarif, tipe, status) VALUES ('$kd_tarif', '$tarif', '$tipe', '$status')");
+                                    if ($insert) {
+                                        echo "<div class='alert alert-success alert-dismissible fade show'>
+                                                <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                                <strong>Data</strong> berhasil dimasukkan.
+                                            </div>";
+                                    } else {
+                                        echo "<div class='alert alert-danger alert-dismissible fade show'>
+                                                <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                                <strong>Data</strong> gagal dimasukan.
+                                            </div>";
+                                    }
+                                }
+                            } elseif ($t == "tarif_edit") {
+                                $kd_tarif = $_POST['kd_tarif'];
+                                $tarif = $_POST['tarif'];
+                                $tipe = $_POST['tipe'];
+                                $status = $_POST['status'];
+
+                                // Cek password yang ada di tabel user
+                                $qcp = mysqli_query($koneksi, "SELECT kd_tarif FROM tarif WHERE kd_tarif='$kd_tarif'");
+                                $dcp = mysqli_fetch_row($qcp);
+
+                                // Cek apakah query berhasil dan ada perubahan data
+                                if ($update && mysqli_affected_rows($koneksi) > 0) {
+                                    echo "<div class='alert alert-success alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> berhasil diubah.
+                                        </div>";
+                                } else {
+                                    echo "<div class='alert alert-primary alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> tidak ada perubahan.
+                                        </div>";
+                                }
+                            } elseif ($t == "tarif_hapus") {
+                                $user = $_POST['username'];
+                                // Hapus data user
+                                $delete = mysqli_query($koneksi, "DELETE FROM user WHERE username='$user'");
+                                if ($delete) {
+                                    echo "<div class='alert alert-success alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> berhasil dihapus.
+                                        </div>";
+                                } else {
+                                    echo "<div class='alert alert-danger alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> Gagal menghapus data.
+                                        </div>";
+                                }
                             }
                         } elseif (isset($_GET['p'])) {
                             $p = $_GET['p'];
@@ -333,84 +393,47 @@ $level = $dt_user[2];
                                 $level = $d[5];
                                 $tipe = $d[6];
                                 $status = $d[7];
+                            }   elseif ($p == "tarif_edit") {
+                                $kd_tarif= "";
+                                $status = "";
                             }
                         }
                         ?>
-                        <div class="card mb-4" id="tarif_add">
+                        <div class="card mb-4" id="tarif_add" style="display: none;">
                             <div class="card-header">
-                                <i class="fa-solid fa-user-plus text-success fa-fade"></i>
-                                Tarif
+                                <i class="fa-solid fa-user-plus text-success"></i> Tambah Tarif
                             </div>
                             <div class="card-body">
-                            <form method="post" class="needs-validation" id="tarif_form">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Username:</label>
-                                    <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" value="<?php echo $user ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password:</label>
-                                    <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" value="<?php echo $password ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="nama" class="form-label">Nama:</label>
-                                    <input type="text" class="form-control" id="nama" placeholder="Enter nama" name="nama" value="<?php echo $nama?>" required>
-                                </div>
-                                <div class="mb-3">
-                                <label for="alamat">Alamat:</label>
-                                <textarea class="form-control" rows="5" id="alamat" name="alamat"><?php echo $alamat ?></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kota" class="form-label">Kota:</label>
-                                    <input type="text" class="form-control" id="kota" placeholder="Enter kota" name="kota" value="<?php echo $kota ?>">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="telp" class="form-label">Telepon:</label>
-                                    <input type="text" class="form-control" id="telp" placeholder="Enter telp" name="telp" value="<?php echo $telp ?>">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="level" class="form-label">Level:</label>
-                                    <select class="form-select" name="level">
-                                        <option value="">Level</option>
-                                        <?php
-                                        $lv = array("admin", "bendahara", "petugas", "warga");
-                                        foreach ($lv as $lv2) {
-                                            if ($level == $lv2) $sel = "SELECTED";
-                                            else $sel = "";
-                                            echo "<option value=$lv2 $sel >"  . ucwords($lv2) . "</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="tipe" class="form-label">Tipe:</label>
-                                    <select class="form-select" name="tipe">
-                                        <option value="">Tipe</option>
-                                        <?php
-                                        $t = array("RT", "Kos");
-                                        foreach ($t as $t2) {
-                                            if ($tipe == $t2) $sel = "SELECTED";
-                                            else $sel = "";
-                                            echo "<option value=$t2 $sel>"  . ucwords($t2) . "</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="status" class="form-label">Status:</label>
-                                    <select class="form-select" name="status">
-                                        <option value="">Status</option>
-                                        <?php
-                                        $s = array("AKTIF", "TIDAK AKTIF");
-                                        foreach ($s as $s2) {
-                                            if ($status == $s2) $sel = "SELECTED";
-                                            else $sel = "";
-                                            echo "<option value='$s2' $sel>$s2</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary" name="tombol" value="user_add">Simpan</button>
-                            </form>
+                                <form method="post" id="tarif_form">
+                                    <div class="mb-3">
+                                        <label for="kd_tarif" class="form-label">ID Tarif:</label>
+                                        <input type="text" class="form-control" id="kd_tarif" name="kd_tarif" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="tarif" class="form-label">Tarif:</label>
+                                        <input type="number" class="form-control" id="tarif" name="tarif" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="tipe" class="form-label">Tipe:</label>
+                                        <select class="form-select" name="tipe">
+                                            <option value="Rumah">Rumah</option>
+                                            <option value="Kost">Kost</option>
+                                        </select>
+                                    </div>
+                                    <?php
+                                    $st = array("AKTIF", "TIDAK AKTIF");
+                                    foreach ($st as $st2) {
+                                        $sel = ($status == $st2) ? "checked" : ""; // Gunakan "checked" untuk radio button
+                                        echo "<div class=\"form-check form-check-inline\">
+                                                <input type='radio' class='form-check-input' id='status_$st2' name='status' value='$st2' $sel>
+                                                <label class='form-check-label' for='status_$st2'>$st2</label>
+                                            </div>";
+                                    }
+                                    ?>
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary" name="tombol" value="tarif_add">Simpan</button>
+                                    </div>
+                                </form>
                         </div>
                         </div>
                         <div class="card mb-4" id="user_add">
@@ -601,7 +624,7 @@ $level = $dt_user[2];
                                             echo "<td>$tipe</td>";
                                             echo "<td>$status</td>";
                                             echo "<td>
-                                                    <a href=index.php?p=user_edit&kd_tarif=$kd_tarif><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
+                                                    <a href=index.php?p=tarif_edit&kd_tarif=$kd_tarif><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
                                                     <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#myModal' data-tarif=$kd_tarif>Hapus</button>
                                                 </td>";
                                             echo "</tr>";

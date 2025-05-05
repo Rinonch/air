@@ -5,7 +5,7 @@ $(document).ready(function () {
     console.log("URI: " + uri + " e[1]: " + (e[1] || "undefined") + " e[2]: " + (e[2] || "undefined"));
 
     // Sembunyikan semua elemen terlebih dahulu
-    $("#user_add, #user_list, #tarif_add, #tarif_list").hide();
+    $("#user_add, #user_list, #tarif_add, #tarif_list, #summary, #chart").hide();
 
     // Logika untuk halaman Manajemen User
     if (e[1] === "user" || e[1] === "user_edit&user") {
@@ -42,27 +42,25 @@ $(document).ready(function () {
 
     // Logika untuk halaman Pembayaran Warga
     else if (e[1] === "pembayaran_warga") {
-        $("#summary, #chart").hide();
-        $("#tarif_list").show();
-        $(".datatable-dropdown").append("<button type='button' class='btn btn-outline-success float-start me-2'><i class='fa-solid fa-money-bill-1-wave'></i></button>");
+        $("#tarif_add").hide(); // Sembunyikan form tambah tarif
+        $("#tarif_list").show(); // Tampilkan tabel tarif
+        $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
 
+        $(".datatable-dropdown").append("<button type='button' class='btn btn-outline-success float-start me-2'><i class='fa-solid fa-money-bill-1-wave'></i> Tambah Tarif</button>");
+
+        // Event untuk tombol Tambah Tarif
         $(".datatable-dropdown button").click(function () {
             console.log("Tombol tambah diklik!");
             $("#tarif_list").hide();
             $("#tarif_add").show();
         });
-
-        $("button[data-bs-toggle='modal']").click(function () {
-            console.log("Tombol hapus di klik");
-            const tarif = $(this).attr("data-kd_tarif");
-            $("#myModal .modal-body").text("Yakin hapus data tarif: " + tarif);
-            $(".modal-footer form").append("<input type='hidden' name='kd_tarif' value='" + tarif + "'>");
-        });
     }
 
     // Logika untuk halaman Tarif Edit
     else if (e[1] && e[1].startsWith("tarif_edit")) {
-        $("#tarif_add").show();
+        $("#tarif_add").show(); // Tampilkan form tambah/edit tarif
+        $("#tarif_list").hide(); // Sembunyikan tabel tarif
+        $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
         $("#tarif_form button").val("tarif_edit");
         $("#tarif_form input[name='kd_tarif']").attr("disabled", true);
 
@@ -81,6 +79,22 @@ $(document).ready(function () {
     // Inisialisasi DataTables
     const datatablesSimple = document.getElementById('tabel_tarif');
     if (datatablesSimple) {
-        new simpleDatatables.DataTable(datatablesSimple);
+        const dataTable = new simpleDatatables.DataTable(datatablesSimple);
+
+        // Tambahkan tombol Tarif setelah DataTables selesai diinisialisasi
+        dataTable.on('datatable.init', function () {
+            if (e[1] !== "user") { // Hanya tambahkan tombol Tarif jika bukan di halaman Data User
+                $(".datatable-dropdown").prepend("<button type='button' class='btn btn-outline-success float-start me-2'><i class='fa-solid fa-money-bill-1-wave'></i> Tarif</button>");
+            }
+        });
     }
+
+    // Tombol Tarif untuk menampilkan form tambah tarif
+    $(document).on("click", ".btn-outline-success", function () {
+        // console.log("Tombol Tarif diklik!");
+        if (e[1] !== "user") {
+        $("#tarif_list").hide();
+        $("#tarif_add").show();
+    }
+    });
 });
