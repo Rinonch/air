@@ -5,7 +5,7 @@ $(document).ready(function () {
     console.log("URI: " + uri + " e[1]: " + (e[1] || "undefined") + " e[2]: " + (e[2] || "undefined"));
 
     // Sembunyikan semua elemen terlebih dahulu
-    $("#user_add, #user_list, #tarif_add, #tarif_list, #summary, #chart").hide();
+    $("#user_add, #user_list, #tarif_add, #tarif_list").hide();
 
     // Logika untuk halaman Manajemen User
     if (e[1] === "user" || e[1] === "user_edit&user") {
