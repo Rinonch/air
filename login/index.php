@@ -344,9 +344,8 @@ $level = $dt_user[2];
                                 $tipe = $_POST['tipe'];
                                 $status = $_POST['status'];
 
-                                // Cek password yang ada di tabel user
-                                $qcp = mysqli_query($koneksi, "SELECT kd_tarif FROM tarif WHERE kd_tarif='$kd_tarif'");
-                                $dcp = mysqli_fetch_row($qcp);
+                                // Update data tarif di database
+                                $update = mysqli_query($koneksi, "UPDATE tarif SET tarif='$tarif', tipe='$tipe', status='$status' WHERE kd_tarif='$kd_tarif'");
 
                                 // Cek apakah query berhasil dan ada perubahan data
                                 if ($update && mysqli_affected_rows($koneksi) > 0) {
@@ -361,9 +360,9 @@ $level = $dt_user[2];
                                         </div>";
                                 }
                             } elseif ($t == "tarif_hapus") {
-                                $user = $_POST['username'];
-                                // Hapus data user
-                                $delete = mysqli_query($koneksi, "DELETE FROM user WHERE username='$user'");
+                                $kd_tarif = $_POST['kd_tarif'];
+                                // Hapus data tarif
+                                $delete = mysqli_query($koneksi, "DELETE FROM tarif WHERE kd_tarif='$kd_tarif'");
                                 if ($delete) {
                                     echo "<div class='alert alert-success alert-dismissible fade show'>
                                             <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
@@ -393,9 +392,20 @@ $level = $dt_user[2];
                                 $level = $d[5];
                                 $tipe = $d[6];
                                 $status = $d[7];
-                            }   elseif ($p == "tarif_edit") {
-                                $kd_tarif= "";
-                                $status = "";
+                            } elseif ($p == "tarif_edit") {
+                                $kd_tarif = $_GET['kd_tarif']; // Ambil kd_tarif dari URL
+                                $q = mysqli_query($koneksi, "SELECT tarif, tipe, status FROM tarif WHERE kd_tarif='$kd_tarif'");
+                                $d = mysqli_fetch_row($q);
+
+                                if ($d) {
+                                    $tarif = $d[0];
+                                    $tipe = $d[1];
+                                    $status = $d[2];
+                                } else {
+                                    $tarif = "";
+                                    $tipe = "";
+                                    $status = "";
+                                }
                             }
                         }
                         ?>
@@ -407,25 +417,26 @@ $level = $dt_user[2];
                                 <form method="post" id="tarif_form">
                                     <div class="mb-3">
                                         <label for="kd_tarif" class="form-label">ID Tarif:</label>
-                                        <input type="text" class="form-control" id="kd_tarif" name="kd_tarif" required>
+                                        <input type="text" class="form-control" id="kd_tarif" name="kd_tarif" value="<?php echo $kd_tarif ?>" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="tarif" class="form-label">Tarif:</label>
-                                        <input type="number" class="form-control" id="tarif" name="tarif" required>
+                                        <input type="number" class="form-control" id="tarif" name="tarif" value="<?php echo $tarif ?>" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="tipe" class="form-label">Tipe:</label>
                                         <select class="form-select" name="tipe">
-                                            <option value="Rumah">Rumah</option>
-                                            <option value="Kost">Kost</option>
+                                        <option value="Rumah" <?php echo ($tipe == "Rumah") ? "selected" : ""; ?>>Rumah</option>
+                                        <option value="Kost" <?php echo ($tipe == "Kost") ? "selected" : ""; ?>>Kost</option>
                                         </select>
                                     </div>
                                     <?php
                                     $st = array("AKTIF", "TIDAK AKTIF");
                                     foreach ($st as $st2) {
-                                        $sel = ($status == $st2) ? "checked" : ""; // Gunakan "checked" untuk radio button
+                                        if ($status == $st2) $checked = "CHECKED";
+                                        else $checked = "";
                                         echo "<div class=\"form-check form-check-inline\">
-                                                <input type='radio' class='form-check-input' id='status_$st2' name='status' value='$st2' $sel>
+                                                <input type='radio' class='form-check-input' id='status_$st2' name='status' value='$st2' $checked>
                                                 <label class='form-check-label' for='status_$st2'>$st2</label>
                                             </div>";
                                     }
