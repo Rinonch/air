@@ -97,4 +97,10 @@ $(document).ready(function () {
         $("#tarif_add").show();
     }
     });
+
+    $(document).on("click", "button[data-bs-target='#hapusTarifModal']", function () {
+        const kd_tarif = $(this).data("tarif");
+        $("#modal-tarif-id").text(kd_tarif); // Tampilkan ID Tarif di modal
+        $("#modal-input-tarif-id").val(kd_tarif); // Set nilai input hidden untuk form
+    });
 });

@@ -8,6 +8,7 @@ if (empty($_SESSION['user']) && empty($_SESSION['pass'])) {
 
 // Database connection
 $user = $pass2 = $nama = $alamat = $kota = $telp = $level = $tipe = $status = ""; // Inisialisasi variabel kosong
+$kd_tarif = $tarif = $tipe = $status = ""; // Inisialisasi variabel kosong
 include '../assets/func.php';
 $air = new klas_air;
 $koneksi = $air->koneksi();
@@ -360,18 +361,18 @@ $level = $dt_user[2];
                                         </div>";
                                 }
                             } elseif ($t == "tarif_hapus") {
-                                $kd_tarif = $_POST['kd_tarif'];
-                                // Hapus data tarif
+                                $kd_tarif = $_POST['kd_tarif']; // Ambil ID Tarif dari form
                                 $delete = mysqli_query($koneksi, "DELETE FROM tarif WHERE kd_tarif='$kd_tarif'");
+
                                 if ($delete) {
                                     echo "<div class='alert alert-success alert-dismissible fade show'>
                                             <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
                                             <strong>Data</strong> berhasil dihapus.
-                                        </div>";
+                                          </div>";
                                 } else {
                                     echo "<div class='alert alert-danger alert-dismissible fade show'>
                                             <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
-                                            <strong>Data</strong> Gagal menghapus data.
+                                            <strong>Data</strong> gagal dihapus.
                                         </div>";
                                 }
                             }
@@ -398,10 +399,12 @@ $level = $dt_user[2];
                                 $d = mysqli_fetch_row($q);
 
                                 if ($d) {
+                                    $kd_tarif = $_GET['kd_tarif'];
                                     $tarif = $d[0];
                                     $tipe = $d[1];
                                     $status = $d[2];
                                 } else {
+                                    $kd_tarif = ""; // Inisialisasi default
                                     $tarif = "";
                                     $tipe = "";
                                     $status = "";
@@ -548,6 +551,30 @@ $level = $dt_user[2];
                                 </div>
                             </div>
                         </div>
+                        <!-- Modal Hapus Tarif -->
+                        <div class="modal fade" id="hapusTarifModal" tabindex="-1" aria-labelledby="hapusTarifModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="hapusTarifModalLabel">Konfirmasi Hapus Tarif</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <!-- Modal Body -->
+                                    <div class="modal-body">
+                                        Apakah Anda yakin ingin menghapus tarif <span id="modal-tarif-id"></span> ?
+                                    </div>
+                                    <!-- Modal Footer -->
+                                    <div class="modal-footer">
+                                        <form method="post">
+                                            <input type="hidden" name="kd_tarif" id="modal-input-tarif-id">
+                                            <button type="submit" name="tombol" value="tarif_hapus" class="btn btn-danger">Hapus</button>
+                                        </form>
+                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Tidak</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card mb-4" id="user_list">
                             <div class="card-header">
                                 <i class="fa-solid fa-users text-success fa-fade"></i>
@@ -636,11 +663,10 @@ $level = $dt_user[2];
                                             echo "<td>$status</td>";
                                             echo "<td>
                                                     <a href=index.php?p=tarif_edit&kd_tarif=$kd_tarif><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
-                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#myModal' data-tarif=$kd_tarif>Hapus</button>
+                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusTarifModal' data-tarif='$kd_tarif'>Hapus</button>
                                                 </td>";
                                             echo "</tr>";
                                         }
-                                        
                                         ?>
                                     </tbody>
                                 </table>
