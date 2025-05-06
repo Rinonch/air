@@ -130,10 +130,6 @@ $level = $dt_user[2];
                                     <?php
                             }
                             ?>
-                            <a class="nav-link" href="index.php?p=profile">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user fa-spin text-info"></i></div>
-                                Profile
-                            </a>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
