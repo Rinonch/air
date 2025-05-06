@@ -63,7 +63,7 @@ $level = $dt_user[2];
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-                            <div class="sb-sidenav-menu-heading">Core</div>
+                            <div class="sb-sidenav-menu-heading">Menu</div>
                             <a class="nav-link" href="index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                 Dashboard
@@ -130,7 +130,10 @@ $level = $dt_user[2];
                                     <?php
                             }
                             ?>
-
+                            <a class="nav-link" href="index.php?p=profile">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user fa-spin text-info"></i></div>
+                                Profile
+                            </a>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
