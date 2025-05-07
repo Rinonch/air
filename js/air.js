@@ -69,6 +69,46 @@ $(document).ready(function () {
         }
     }
 
+    // Logika untuk halaman Catat Meter
+    else if (e[1] === "catat_meter") {
+        // Sembunyikan summary dan chart
+        $("#summary, #chart").hide();
+
+        // Tampilkan form catat meter jika ada
+        $("#meter_form").show();
+
+        // Jika ada tabel data catat meter, bisa ditampilkan juga
+        $("#meter_list").show();
+
+        // Tambahan: reset form jika tombol tambah diklik
+        $(".btn-catat-meter-add").click(function () {
+            $("#catat_meter_form input, #catat_meter_form textarea").val("");
+            $("#catat_meter_form").show();
+            $("#catat_meter_list").hide();
+        });
+
+        // Tambahan: kembali ke list
+        $(".btn-catat-meter-cancel").click(function () {
+            $("#catat_meter_form").hide();
+            $("#catat_meter_list").show();
+        });
+
+        // Inisialisasi DataTables
+        const datatablesSimple = document.getElementById('tabel_meter');
+        if (datatablesSimple) {
+        const dataTable = new simpleDatatables.DataTable(datatablesSimple);
+    }
+    }
+
+    // Tambahkan setelah proses submit atau setelah alert meter muncul
+    if ($("#alert-meter").hasClass("alert-danger")) { // jika saat entri data ada error
+        $("#meter_list").hide();
+        $("#meter_add").show();
+    } else if ($("#alert-meter").hasClass("alert-success")) {
+        $("#meter_list").show();
+        $("#meter_add").hide();
+    }
+
     // Tombol Simpan untuk Tarif
     $("#btn-simpan").click(function () {
         $("#tarif_add").hide();
@@ -87,6 +127,20 @@ $(document).ready(function () {
                 $(".datatable-dropdown").prepend("<button type='button' class='btn btn-outline-success float-start me-2'><i class='fa-solid fa-money-bill-1-wave'></i> Tarif</button>");
             }
         });
+
+        // Tambahkan tombol Meter setelah DataTables selesai diinisialisasi
+        dataTable.on('datatable.init', function () {
+            if (e[1] === "catat_meter") { // Khusus untuk halaman Catat Meter
+                // Hilangkan tombol Tarif jika ada
+                $(".btn-outline-success:contains('Tarif')").remove();
+                // Tambahkan tombol Meter jika belum ada
+                if ($(".btn-catat-meter").length === 0) {
+                    $(".datatable-dropdown").prepend(
+                        "<button type='button' class='btn btn-outline-success float-start me-2 btn-catat-meter'><i class='fa-solid fa-square-plus'></i> Meter</button>"
+                    );
+                }
+            }
+        });
     }
 
     // Tombol Tarif untuk menampilkan form tambah tarif
@@ -102,5 +156,18 @@ $(document).ready(function () {
         const kd_tarif = $(this).data("tarif");
         $("#modal-tarif-id").text(kd_tarif); // Tampilkan ID Tarif di modal
         $("#modal-input-tarif-id").val(kd_tarif); // Set nilai input hidden untuk form
+    });
+
+    // Tombol Meter untuk menampilkan form tambah meter (khusus catat_meter)
+    $(document).on("click", ".btn-catat-meter", function () {
+        // Reset form input dan textarea
+        $("#meter_form input, #meter_form textarea").val("");
+        // Tampilkan form catat meter
+        $("#meter_form").show();
+        // Sembunyikan list catat meter
+        $("#meter_list, #tarif_add").hide();
+        // Tampilkan meter add
+        $("#meter_add").show();
+        
     });
 });
