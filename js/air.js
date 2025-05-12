@@ -4,6 +4,11 @@ $(document).ready(function () {
     const e = uri.split("=");
     console.log("URI: " + uri + " e[1]: " + (e[1] || "undefined") + " e[2]: " + (e[2] || "undefined"));
 
+    // Sembunyikan meter_list di semua halaman kecuali catat_meter
+    if (e[1] !== "catat_meter") {
+        $("#meter_list").hide();
+    }
+
     // Sembunyikan semua elemen terlebih dahulu
     $("#user_add, #user_list, #tarif_add, #tarif_list").hide();
 
@@ -100,6 +105,34 @@ $(document).ready(function () {
     }
     }
 
+    // Logika untuk halaman Catat Meter atau Edit Meter
+    else if (e[1] === "catat_meter" || e[1] === "meter_edit&no") {
+        // Sembunyikan semua elemen utama
+        $("#summary, #chart, #user_add, #user_list, #tarif_add, #tarif_list").hide();
+
+        if (e[1] === "catat_meter") {
+            // Sembunyikan summary dan chart, tampilkan form tambah meter
+            $("#meter_add").hide();
+            $("#meter_list").show();
+        } else {
+            // Untuk halaman edit meter
+            console.log("aksi meter_edit");
+            $("#summary, #chart, #meter_list").hide();
+            $("#meter_add").show();
+
+            // Reset value tombol submit jadi meter_edit
+            $("#meter_form button").val("meter_edit");
+
+            // Disable primary key username
+            $("#meter_form select[name='username']").attr("disabled", true);
+
+            // Tambahkan elemen input hidden untuk no (ID meter)
+            if (e[2] && $("#meter_form input[name='no']").length === 0) {
+                $("#meter_form").append("<input type='hidden' name='no' value='" + e[2] + "'>");
+            }
+        }
+    }
+
     // Tambahkan setelah proses submit atau setelah alert meter muncul
     if ($("#alert-meter").hasClass("alert-danger")) { // jika saat entri data ada error
         $("#meter_list").hide();
@@ -169,5 +202,11 @@ $(document).ready(function () {
         // Tampilkan meter add
         $("#meter_add").show();
         
+    });
+
+    $(document).on("click", "button[data-bs-target='#hapusMeterModal']", function () {
+        const no = $(this).data("no");
+        $("#modal-meter-no").text(no);
+        $("#modal-input-meter-no").val(no);
     });
 });

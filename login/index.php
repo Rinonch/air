@@ -162,7 +162,7 @@ $level = $dt_user[2];
                             } elseif ($e[1] == "ubah_datameter_warga") {
                                 $h1 = "Ubah Datameter Warga";
                                 $li = "Ubah Datameter Air Warga";
-                            } elseif ($e[1] == "catat_meter") {
+                            } elseif ($e[1] == "catat_meter" || $e[1] == "meter_edit&no") {
                                 $h1 = "Catat Meteran Warga";
                                 $li = "Pencatatatan Meteran Air Warga";
                             }
@@ -416,6 +416,54 @@ $level = $dt_user[2];
                                         }
                                     }
                                 }
+                            } elseif ($t == "meter_edit") {
+                                $no = $_POST['no'];
+                                $meter_awal = $_POST['meter_awal'];
+                                $meter_akhir = $_POST['meter_akhir'];
+
+                                // Ambil username dan tarif lama
+                                $q = mysqli_query($koneksi, "SELECT username, kd_tarif FROM pemakaian WHERE no='$no'");
+                                $d = mysqli_fetch_row($q);
+                                $username = $d[0];
+                                $kd_tarif = $d[1];
+                                $tarif = $air->kdtarif_to_tarif($kd_tarif);
+
+                                $pemakaian = $meter_akhir - $meter_awal;
+                                $tagihan = $tarif * $pemakaian;
+
+                                if ($pemakaian < 0) {
+                                    echo "<div class='alert alert-danger alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Meter akhir</strong> harus lebih besar dari meter awal.
+                                        </div>";
+                                } else {
+                                    $update = mysqli_query($koneksi, "UPDATE pemakaian SET meter_awal='$meter_awal', meter_akhir='$meter_akhir', pemakaian='$pemakaian', tagihan='$tagihan' WHERE no='$no'");
+                                    if ($update) {
+                                        echo "<div class='alert alert-success alert-dismissible fade show'>
+                                                <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                                <strong>Data</strong> berhasil diubah.
+                                            </div>";
+                                    } else {
+                                        echo "<div class='alert alert-danger alert-dismissible fade show'>
+                                                <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                                <strong>Data</strong> gagal diubah.
+                                            </div>";
+                                    }
+                                }
+                            } elseif ($t == "meter_hapus") {
+                                $no = $_POST['no'];
+                                $hapus = mysqli_query($koneksi, "DELETE FROM pemakaian WHERE no='$no'");
+                                if ($hapus) {
+                                    echo "<div class='alert alert-success alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> berhasil dihapus.
+                                        </div>";
+                                } else {
+                                    echo "<div class='alert alert-danger alert-dismissible fade show'>
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
+                                            <strong>Data</strong> gagal dihapus.
+                                        </div>";
+                                }
                             }
                         } elseif (isset($_GET['p'])) {
                             $p = $_GET['p'];
@@ -449,6 +497,20 @@ $level = $dt_user[2];
                                     $tarif = "";
                                     $tipe = "";
                                     $status = "";
+                                }
+                            } elseif ($p == "meter_edit") {
+                                $no = $_GET['no'];
+                                $q = mysqli_query($koneksi, "SELECT username, meter_awal, meter_akhir FROM pemakaian WHERE no='$no'");
+                                $d = mysqli_fetch_row($q);
+
+                                if ($d) {
+                                    $username = $d[0];
+                                    $meter_awal = $d[1];
+                                    $meter_akhir = $d[2];
+                                } else {
+                                    $username = "";
+                                    $meter_awal = "";
+                                    $meter_akhir = "";
                                 }
                             }
                         }
@@ -497,21 +559,22 @@ $level = $dt_user[2];
                             </div>
                             <div class="card-body">
                                 <form method="post" id="meter_form">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Nama Warga:</label>
-                                    <select class="form-select" name="username" required>
-                                        <option value="">Nama Warga</option>
-                                        <?php
-                                        $qw = mysqli_query($koneksi, "SELECT username, nama FROM user WHERE level='warga'");
-                                        while($dw = mysqli_fetch_row($qw)) {
-                                        if ($username == $dw[0]) $sel = "SELECTED";
-                                        else $sel = "";
-
-                                        echo "<option value=$dw[0] $sel>$dw[1]</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                                    <?php if (isset($_GET['p']) && $_GET['p'] == "meter_edit") { ?>
+                                        <input type="hidden" name="no" value="<?php echo htmlspecialchars($_GET['no']); ?>">
+                                    <?php } ?>
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Nama Warga:</label>
+                                        <select class="form-select" name="username" required <?php if (isset($_GET['p']) && $_GET['p'] == "meter_edit") echo "disabled"; ?>>
+                                            <option value="">Nama Warga</option>
+                                            <?php
+                                            $qw = mysqli_query($koneksi, "SELECT username, nama FROM user WHERE level='warga'");
+                                            while($dw = mysqli_fetch_row($qw)) {
+                                                $sel = ($username == $dw[0]) ? "SELECTED" : "";
+                                                echo "<option value='$dw[0]' $sel>$dw[1]</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
                                     <div class="mb-3">
                                         <label for="meter_awal" class="form-label">Meter Awal (m<sup>3</sup>) :</label>
                                         <input type="text" class="form-control" id="meter_awal" name="meter_awal" value="<?php echo $meter_awal ?>" required>
@@ -521,7 +584,9 @@ $level = $dt_user[2];
                                         <input type="text" class="form-control" id="meter_akhir" name="meter_akhir" value="<?php echo $meter_akhir ?>" required>
                                     </div>
                                     <div class="mt-3">
-                                        <button type="submit" class="btn btn-primary" name="tombol" value="meter_add">Simpan</button>
+                                        <button type="submit" class="btn btn-primary" name="tombol" value="<?php echo (isset($_GET['p']) && $_GET['p'] == "meter_edit") ? "meter_edit" : "meter_add"; ?>">
+                                            Simpan
+                                        </button>
                                     </div>
                                 </form>
                         </div>
@@ -651,6 +716,27 @@ $level = $dt_user[2];
                                 </div>
                             </div>
                         </div>
+                        <!-- Modal Hapus Meter -->
+                        <div class="modal fade" id="hapusMeterModal" tabindex="-1" aria-labelledby="hapusMeterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <form method="post">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="hapusMeterModalLabel">Konfirmasi Hapus Data Meter</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                </div>
+                                <div class="modal-body">
+                                Apakah Anda yakin ingin menghapus meter <span id="modal-meter-no"></span>?
+                                <input type="hidden" name="no" id="modal-input-meter-no">
+                                </div>
+                                <div class="modal-footer">
+                                <button type="submit" name="tombol" value="meter_hapus" class="btn btn-danger">Hapus</button>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Tidak</button>
+                                </div>
+                            </form>
+                            </div>
+                        </div>
+                        </div>
                         <div class="card mb-4" id="user_list">
                             <div class="card-header">
                                 <i class="fa-solid fa-users text-success fa-fade"></i>
@@ -779,17 +865,27 @@ $level = $dt_user[2];
                                             $tgl = $air->tgl_walik($d[5]);
                                             $waktu = $d[6];
 
+                                            $tgl_tabel = date_create($d[5]);
+                                            $tgl_sekarang = date_create();
+                                            $diff = date_diff($tgl_tabel, $tgl_sekarang);
+                                            $selisih = $diff->days;
+
                                             echo "<tr>";
                                             echo "<td>$nama</td>";
-                                            echo "<td>$tgl $waktu</td>";
+                                            echo "<td>$tgl $waktu |  ".date("Y-m-d")." $selisih hari</td>";
                                             echo "<td>$meter_awal</td>";
                                             echo "<td>$meter_akhir</td>";
                                             echo "<td>$pemakaian</td>";
-                                            echo "<td>
-                                                    <a href=index.php?p=tarif_edit&kd_tarif=$kd_tarif><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
-                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusTarifModal' data-tarif='$kd_tarif'>Hapus</button>
+                                            if($selisih <= 30) {
+                                                echo"<td>
+                                                    <a href=index.php?p=meter_edit&no=$no><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
+                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusMeterModal' data-no='$no'>Hapus</button>
                                                 </td>";
-                                            echo "</tr>";
+                                            }
+                                            else {
+                                                echo "<td></td>";
+                                            }
+                                                echo "</tr>";
                                         }
                                         ?>
                                     </tbody>
