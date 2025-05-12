@@ -75,17 +75,13 @@ $level = $dt_user[2];
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                     Manajemen User
                                 </a>
-                                <a class="nav-link" href="index.php?p=pemakaian_warga">
+                                <a class="nav-link" href="index.php?p=catat_meter">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                     Lihat Pemakaian Warga
                                 </a>
                                 <a class="nav-link" href="index.php?p=pembayaran_warga">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                     Pembayaran Warga
-                                </a>
-                                <a class="nav-link" href="index.php?p=ubah_datameter_warga">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                    Ubah Datameter Warga
                                 </a>
                             <?php
                             }
@@ -95,9 +91,9 @@ $level = $dt_user[2];
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                     Pembayaran Warga
                                 </a>
-                                <a class="nav-link" href="index.php?p=ubah_datameter_warga">
+                                <a class="nav-link" href="index.php?p=catat_meter">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                    Ubah Datameter Warga
+                                    Lihat Pemakaian Warga
                                 </a>
                                 <?php
                             }
@@ -864,6 +860,7 @@ $level = $dt_user[2];
                                             $pemakaian = $d[4];
                                             $tgl = $air->tgl_walik($d[5]);
                                             $waktu = $d[6];
+                                            $level_login = $dt_user[2];
 
                                             $tgl_tabel = date_create($d[5]);
                                             $tgl_sekarang = date_create();
@@ -876,15 +873,22 @@ $level = $dt_user[2];
                                             echo "<td>$meter_awal</td>";
                                             echo "<td>$meter_akhir</td>";
                                             echo "<td>$pemakaian</td>";
-                                            if($selisih <= 30) {
+
+                                            if($level_login == "admin" || $level_login == "bendahara") {
                                                 echo"<td>
                                                     <a href=index.php?p=meter_edit&no=$no><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
                                                     <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusMeterModal' data-no='$no'>Hapus</button>
                                                 </td>";
-                                            }
-                                            else {
+                                            }else {
+                                                if($selisih <= 30) {
+                                                echo"<td>
+                                                    <a href=index.php?p=meter_edit&no=$no><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
+                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusMeterModal' data-no='$no'>Hapus</button>
+                                                </td>";
+                                            }else {
                                                 echo "<td></td>";
                                             }
+                                        }
                                                 echo "</tr>";
                                         }
                                         ?>
