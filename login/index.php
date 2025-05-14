@@ -79,17 +79,17 @@ $level = $dt_user[2];
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                     Lihat Pemakaian Warga
                                 </a>
-                                <a class="nav-link" href="index.php?p=pembayaran_warga">
+                                <a class="nav-link" href="index.php?p=manajemen_tarif">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                    Pembayaran Warga
+                                    Manajemen Tarif
                                 </a>
                             <?php
                             }
                             elseif($level=="bendahara"){
                             ?>
-                                <a class="nav-link" href="index.php?p=pembayaran_warga">
+                                <a class="nav-link" href="index.php?p=manajemen_tarif">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                    Pembayaran Warga
+                                    Manajemen Tarif
                                 </a>
                                 <a class="nav-link" href="index.php?p=catat_meter">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
@@ -99,13 +99,9 @@ $level = $dt_user[2];
                             }
                             elseif($level=="petugas"){
                                 ?>
-                                    <a class="nav-link" href="index.php?p=pembayaran_warga">
-                                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                        Lihat Pembayaran Warga
-                                    </a>
                                     <a class="nav-link" href="index.php?p=catat_meter">
                                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                        Catat Meteran Warga
+                                        Catat Meter
                                     </a>
                                     <?php
                             }
@@ -114,14 +110,6 @@ $level = $dt_user[2];
                                     <a class="nav-link" href="index.php?p=pemakaian_sendiri">
                                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                         Lihat Pemakaian Sendiri
-                                    </a>
-                                    <a class="nav-link" href="index.php?p=tagihan_sendiri">
-                                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                        Lihat Tagihan Sendiri
-                                    </a>
-                                    <a class="nav-link" href="index.php?p=bayar_tagihan_sendiri">
-                                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                        Bayar Tagihan Sendiri
                                     </a>
                                     <?php
                             }
@@ -145,10 +133,10 @@ $level = $dt_user[2];
                             if ($e[1] == "user" || $e[1] == "user_edit&user") {
                                 $h1 = "Manajemen User";
                                 $li = "Menu untuk CRUD User";
-                            } elseif ($e[1] == "pemakaian_warga") {
-                                $h1 = "Lihat Pemakaian Warga";
-                                $li = "Lihat Data Pemakaian Air Warga";
-                            } elseif ($e[1] == "pembayaran_warga" || $e[1] == "tarif_edit&kd_tarif") {
+                            } elseif ($e[1] == "pemakaian_sendiri") {
+                                $h1 = "Pemakaian & Tagihan Air";
+                                $li = "Data Pemakaian & Tagihan Air";
+                            } elseif ($e[1] == "manajemen_tarif" || $e[1] == "tarif_edit&kd_tarif") {
                                 $h1 = "Lihat Pembayaran Warga";
                                 $li = "Lihat Data Pembayaran Air Warga";
                             } elseif ($e[1] == "ubah_datameter_warga") {
@@ -377,24 +365,22 @@ $level = $dt_user[2];
                                 $username = $_POST['username'];
                                 $meter_awal = $_POST['meter_awal'];
                                 $meter_akhir = $_POST['meter_akhir'];
-                                $kd_tarif = $air->user_to_idtarif($username); // Ambil kd_tarif berdasarkan username
-                                $tarif = $air->kdtarif_to_tarif($kd_tarif); // Ambil tarif berdasarkan kd_tarif
-                                
-                                // Periksa apakah meter awal lebih kecil dari meter akhir
+                                $kd_tarif = $air->user_to_idtarif($username);
+                                $tarif = $air->kdtarif_to_tarif($kd_tarif);
+                                $status = isset($_POST['status']) ? $_POST['status'] : 'BLM LUNAS';
+
                                 $pemakaian = $meter_akhir - $meter_awal;
                                 $tagihan = $tarif * $pemakaian;
-                                if($pemakaian < 0 ) { // Meter awal lebih besar dari meter akhir
+                                if($pemakaian < 0 ) {
                                     echo "<div class='alert alert-danger alert-dismissible fade show'>
                                                 <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
                                                 <strong>Meter akhir </strong> harus lebih besar dari meter awal.
                                             </div>";
                                 }
-                                else { // Meter akhir lebih besar dari meter awal
-                                    // Cek apakah data pemakaian untuk user dan tanggal ini sudah ada
+                                else {
                                     $qc = mysqli_query($koneksi, "SELECT no FROM pemakaian WHERE username='$username' AND tgl=CURRENT_DATE()");
                                     if (mysqli_num_rows($qc) == 0) {
-                                        // Insert ke database tarif
-                                        $insert = mysqli_query($koneksi, "INSERT INTO pemakaian (username, meter_awal, meter_akhir, pemakaian, tgl, waktu, kd_tarif, tagihan, status) VALUES ('$username', '$meter_awal', '$meter_akhir', '$pemakaian', CURRENT_DATE(), CURRENT_TIME(), '$kd_tarif', '$tagihan', 'BELUM')");
+                                        $insert = mysqli_query($koneksi, "INSERT INTO pemakaian (username, meter_awal, meter_akhir, pemakaian, tgl, waktu, kd_tarif, tagihan, status) VALUES ('$username', '$meter_awal', '$meter_akhir', '$pemakaian', CURRENT_DATE(), CURRENT_TIME(), '$kd_tarif', '$tagihan', '$status')");
                                         if ($insert) {
                                             echo "<div class='alert alert-success alert-dismissible fade show' id='alert-meter'>
                                                     <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
@@ -412,8 +398,8 @@ $level = $dt_user[2];
                                 $no = $_POST['no'];
                                 $meter_awal = $_POST['meter_awal'];
                                 $meter_akhir = $_POST['meter_akhir'];
+                                $status = isset($_POST['status']) ? $_POST['status'] : 'BLM LUNAS';
 
-                                // Ambil username dan tarif lama
                                 $q = mysqli_query($koneksi, "SELECT username, kd_tarif FROM pemakaian WHERE no='$no'");
                                 $d = mysqli_fetch_row($q);
                                 $username = $d[0];
@@ -429,7 +415,7 @@ $level = $dt_user[2];
                                             <strong>Meter akhir</strong> harus lebih besar dari meter awal.
                                         </div>";
                                 } else {
-                                    $update = mysqli_query($koneksi, "UPDATE pemakaian SET meter_awal='$meter_awal', meter_akhir='$meter_akhir', pemakaian='$pemakaian', tagihan='$tagihan' WHERE no='$no'");
+                                    $update = mysqli_query($koneksi, "UPDATE pemakaian SET meter_awal='$meter_awal', meter_akhir='$meter_akhir', pemakaian='$pemakaian', tagihan='$tagihan', status='$status' WHERE no='$no'");
                                     if ($update) {
                                         echo "<div class='alert alert-success alert-dismissible fade show'>
                                                 <button type='button' class='btn-close' data-bs-dismiss='alert'></button>
@@ -492,19 +478,69 @@ $level = $dt_user[2];
                                 }
                             } elseif ($p == "meter_edit") {
                                 $no = $_GET['no'];
-                                $q = mysqli_query($koneksi, "SELECT username, meter_awal, meter_akhir FROM pemakaian WHERE no='$no'");
+                                $q = mysqli_query($koneksi, "SELECT username, meter_awal, meter_akhir, status FROM pemakaian WHERE no='$no'");
                                 $d = mysqli_fetch_row($q);
 
                                 if ($d) {
                                     $username = $d[0];
                                     $meter_awal = $d[1];
                                     $meter_akhir = $d[2];
+                                    $status = $d[3];
                                 } else {
                                     $username = "";
                                     $meter_awal = "";
                                     $meter_akhir = "";
+                                    $status = "";
                                 }
                             }
+                        }
+                        ?>
+                        <?php
+                        if (isset($_GET['p']) && $_GET['p'] == "pemakaian_sendiri" && $level == "warga") {
+                            $username = $_SESSION['user'];
+                            ?>
+                            <div class="card mb-4" id="tagihan_sendiri">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice-dollar text-success fa-beat"></i>
+                                    Tagihan Air Saya
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <th>Meter Awal</th>
+                                                <th>Meter Akhir</th>
+                                                <th>Pemakaian (m<sup>3</sup>)</th>
+                                                <th>Tagihan (Rp)</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php
+                                        $q = mysqli_query($koneksi, "SELECT tgl, meter_awal, meter_akhir, pemakaian, tagihan, status FROM pemakaian WHERE username='$username' ORDER BY tgl DESC");
+                                        while ($d = mysqli_fetch_row($q)) {
+                                            echo "<tr>";
+                                            echo "<td>".$air->tgl_walik($d[0])."</td>";
+                                            echo "<td>".$d[1]."</td>";
+                                            echo "<td>".$d[2]."</td>";
+                                            echo "<td>".$d[3]."</td>";
+                                            echo "<td>".number_format($d[4],0,',','.')."</td>";
+
+                                            // Status dengan badge warna
+                                            if (strtoupper($d[5]) == "LUNAS") {
+                                                echo "<td><span class='btn btn-success btn-sm'>LUNAS</span></td>";
+                                            } else {
+                                                echo "<td><span class='btn btn-danger btn-sm'>BLM LUNAS</span></td>";
+                                            }
+                                            echo "</tr>";
+                                        }
+                                        ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <?php
                         }
                         ?>
                         <div class="card mb-4" id="tarif_add" style="display: none;">
@@ -574,6 +610,19 @@ $level = $dt_user[2];
                                     <div class="mb-3">
                                         <label for="meter_akhir" class="form-label">Meter Akhir (m<sup>3</sup>) :</label>
                                         <input type="text" class="form-control" id="meter_akhir" name="meter_akhir" value="<?php echo $meter_akhir ?>" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Status Tagihan:</label><br>
+                                        <?php
+                                        $st = array("LUNAS", "BLM LUNAS");
+                                        foreach ($st as $st2) {
+                                            $checked = ($status == $st2) ? "checked" : "";
+                                            echo "<div class=\"form-check form-check-inline\">
+                                                    <input type='radio' class='form-check-input' id='status_$st2' name='status' value='$st2' $checked>
+                                                    <label class='form-check-label' for='status_$st2'>$st2</label>
+                                                </div>";
+                                        }
+                                        ?>
                                     </div>
                                     <div class="mt-3">
                                         <button type="submit" class="btn btn-primary" name="tombol" value="<?php echo (isset($_GET['p']) && $_GET['p'] == "meter_edit") ? "meter_edit" : "meter_add"; ?>">
@@ -814,7 +863,13 @@ $level = $dt_user[2];
                                             echo "<td>$kd_tarif</td>";
                                             echo "<td>$tarif</td>";
                                             echo "<td>$tipe</td>";
-                                            echo "<td>$status</td>";
+                                            echo "<td>";
+                                            if (strtoupper($status) == "AKTIF") {
+                                                echo "AKTIF";
+                                            } else {
+                                                echo "TIDAK AKTIF";
+                                            }
+                                            echo "</td>";
                                             echo "<td>
                                                     <a href=index.php?p=tarif_edit&kd_tarif=$kd_tarif><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
                                                     <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusTarifModal' data-tarif='$kd_tarif'>Hapus</button>
@@ -840,13 +895,14 @@ $level = $dt_user[2];
                                             <th>Meter Awal</th>
                                             <th>Meter Akhir</th>
                                             <th>Pemakaian</th>
+                                            <th>Status</th>
                                             <th></th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
                                         <?php
-                                        $q = mysqli_query($koneksi, "SELECT no, username, meter_awal, meter_akhir, pemakaian, tgl, waktu FROM pemakaian ORDER BY tgl DESC, username ASC");
+                                        $q = mysqli_query($koneksi, "SELECT no, username, meter_awal, meter_akhir, pemakaian, tgl, waktu, status FROM pemakaian ORDER BY tgl DESC, username ASC");
                                         while ($d = mysqli_fetch_row($q)) {
                                             $no = $d[0];
                                             $dt_user2 = $air->dt_user($d[1]); 
@@ -856,6 +912,7 @@ $level = $dt_user[2];
                                             $pemakaian = $d[4];
                                             $tgl = $air->tgl_walik($d[5]);
                                             $waktu = $d[6];
+                                            $status = $d[7];
                                             $level_login = $dt_user[2];
 
                                             $tgl_tabel = date_create($d[5]);
@@ -869,6 +926,13 @@ $level = $dt_user[2];
                                             echo "<td>$meter_awal</td>";
                                             echo "<td>$meter_akhir</td>";
                                             echo "<td>$pemakaian</td>";
+                                            echo "<td>";
+                                            if (strtoupper($status) == "LUNAS") {
+                                                echo "<span class='btn btn-success btn-sm'>LUNAS</span>";
+                                            } else {
+                                                echo "<span class='btn btn-danger btn-sm'>BLM LUNAS</span>";
+                                            }
+                                            echo "</td>";
 
                                             if($level_login == "admin" || $level_login == "bendahara") {
                                                 echo"<td>

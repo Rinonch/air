@@ -45,8 +45,14 @@ $(document).ready(function () {
         });
     }
 
-    // Logika untuk halaman Pembayaran Warga
-    else if (e[1] === "pembayaran_warga") {
+    // Logika untuk halaman Pemakaian Sendiri Warga
+    else if (e[1] === "pemakaian_sendiri") {
+        $("#tagihan_sendiri").show(); // Tampilkan tabel tarif
+        $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
+    }
+
+    // Logika untuk halaman Manajemen Tarif
+    else if (e[1] === "manajemen_tarif") {
         $("#tarif_add").hide(); // Sembunyikan form tambah tarif
         $("#tarif_list").show(); // Tampilkan tabel tarif
         $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
