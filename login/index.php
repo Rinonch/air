@@ -99,13 +99,9 @@ $level = $dt_user[2];
                             }
                             elseif($level=="petugas"){
                                 ?>
-                                    <a class="nav-link" href="index.php?p=pemakaian_warga">
+                                    <a class="nav-link" href="index.php?p=pembayaran_warga">
                                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                        Lihat Pemakaian Warga
-                                    </a>
-                                    <a class="nav-link" href="index.php?p=ubah_datameter_warga">
-                                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
-                                        Ubah Datameter Warga
+                                        Lihat Pembayaran Warga
                                     </a>
                                     <a class="nav-link" href="index.php?p=catat_meter">
                                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
