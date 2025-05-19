@@ -892,9 +892,10 @@ $level = $dt_user[2];
                                         <tr>
                                             <th>Nama Warga</th>
                                             <th>Tanggal & Waktu</th>
-                                            <th>Meter Awal</th>
-                                            <th>Meter Akhir</th>
-                                            <th>Pemakaian</th>
+                                            <th>Meter Awal (m<sup>3</sup>)</th>
+                                            <th>Meter Akhir (m<sup>3</sup>)</th>
+                                            <th>Pemakaian (m<sup>3</sup>)</th>
+                                            <th>Tagihan (Rp)</th>
                                             <th>Status</th>
                                             <th></th>
                                         </tr>
@@ -926,6 +927,7 @@ $level = $dt_user[2];
                                             echo "<td>$meter_awal</td>";
                                             echo "<td>$meter_akhir</td>";
                                             echo "<td>$pemakaian</td>";
+                                            echo "<td>".number_format($d[4] * $tarif, 0, ',', '.')."</td>";
                                             echo "<td>";
                                             if (strtoupper($status) == "LUNAS") {
                                                 echo "<span class='btn btn-success btn-sm'>LUNAS</span>";
