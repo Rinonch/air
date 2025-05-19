@@ -32,7 +32,7 @@ $level = $dt_user[2];
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="../js/air.js"></script>
     </head>
-    <body class="sb-nav-fixed">
+    <body class="sb-nav-fixed" data-level="<?php echo $level; ?>">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="index.html">Start Bootstrap</a>

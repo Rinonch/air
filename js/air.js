@@ -91,24 +91,40 @@ $(document).ready(function () {
         // Jika ada tabel data catat meter, bisa ditampilkan juga
         $("#meter_list").show();
 
-        // Tambahan: reset form jika tombol tambah diklik
-        $(".btn-catat-meter-add").click(function () {
+        // Ambil level user dari atribut body
+        var level_login = $("body").data("level");
+
+        // Inisialisasi DataTables pada tabel meter
+        const datatablesSimple = document.getElementById('tabel_meter');
+        if (datatablesSimple) {
+            const dataTable = new simpleDatatables.DataTable(datatablesSimple);
+
+            dataTable.on('datatable.init', function () {
+                // Tampilkan tombol Meter hanya untuk admin
+                if (level_login === "admin") {
+                    // Hilangkan tombol Meter jika sudah ada
+                    $(".btn-catat-meter-add").remove();
+                    $(".datatable-dropdown").prepend(
+                        "<button type='button' class='btn btn-outline-success float-start me-2 btn-catat-meter-add'><i class='fa-solid fa-square-plus'></i> Meter</button>"
+                    );
+                }
+            });
+        }
+
+        // Event tombol tambah meter
+        $(document).on("click", ".btn-catat-meter-add", function () {
             $("#catat_meter_form input, #catat_meter_form textarea").val("");
             $("#catat_meter_form").show();
             $("#catat_meter_list").hide();
+            $("#meter_list").hide();         // Sembunyikan meter_list
+            $("#meter_petugas").hide();      // Sembunyikan meter_petugas
         });
 
-        // Tambahan: kembali ke list
-        $(".btn-catat-meter-cancel").click(function () {
+        // Event tombol batal tambah meter
+        $(document).on("click", ".btn-catat-meter-cancel", function () {
             $("#catat_meter_form").hide();
             $("#catat_meter_list").show();
         });
-
-        // Inisialisasi DataTables
-        const datatablesSimple = document.getElementById('tabel_meter');
-        if (datatablesSimple) {
-        const dataTable = new simpleDatatables.DataTable(datatablesSimple);
-    }
     }
 
     // Logika untuk halaman Catat Meter atau Edit Meter
