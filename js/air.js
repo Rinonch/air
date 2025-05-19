@@ -10,7 +10,7 @@ $(document).ready(function () {
     }
 
     // Sembunyikan semua elemen terlebih dahulu
-    $("#user_add, #user_list, #tarif_add, #tarif_list").hide();
+    $("#user_add, #user_list, #tarif_add, #tarif_list, #meter_petugas").hide();
 
     // Logika untuk halaman Manajemen User
     if (e[1] === "user" || e[1] === "user_edit&user") {
@@ -215,4 +215,46 @@ $(document).ready(function () {
         $("#modal-meter-no").text(no);
         $("#modal-input-meter-no").val(no);
     });
+
+    // Logika untuk halaman Meter Petugas
+    if (e[1] === "meter_petugas") {
+        // Sembunyikan elemen lain
+        $("#tarif_add, #tarif_list, #summary, #chart, #meter_list, #meter_add, #meter_form").hide();
+
+        // Tampilkan tabel khusus petugas
+        $("#meter_petugas").show();
+
+        // Inisialisasi DataTables pada tabel petugas
+        const datatablesPetugas = document.getElementById('tabel_meter_petugas');
+        if (datatablesPetugas) {
+            const dataTable = new simpleDatatables.DataTable(datatablesPetugas);
+
+            // Tambahkan tombol Meter setelah DataTables selesai diinisialisasi
+            dataTable.on('datatable.init', function () {
+                // Hilangkan tombol Meter jika sudah ada
+                $(".btn-catat-meter-petugas").remove();
+                // Hilangkan tombol Tarif jika ada
+                $(".btn-outline-success:contains('Tarif')").remove();
+                // Tambahkan tombol Meter jika belum ada
+                $(".datatable-dropdown").prepend(
+                    "<button type='button' class='btn btn-outline-success float-start me-2 btn-catat-meter-petugas'><i class='fa-solid fa-square-plus'></i> Meter</button>"
+                );
+            });
+        }
+
+        // Event tombol tambah meter (jika ada form input)
+        $(document).on("click", ".btn-catat-meter-petugas", function () {
+            $("#meter_form input, #meter_form textarea").val("");
+            $("#meter_form").show();
+            $("#meter_petugas, #tarif_add").hide();
+            $("#meter_add").show();
+        });
+
+        // Event tombol batal tambah meter (jika ada)
+        $(document).on("click", ".btn-catat-meter-cancel", function () {
+            $("#meter_form").hide();
+            $("#meter_petugas").show();
+            $("#meter_add").hide();
+        });
+    }
 });

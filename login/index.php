@@ -99,7 +99,7 @@ $level = $dt_user[2];
                             }
                             elseif($level=="petugas"){
                                 ?>
-                                    <a class="nav-link" href="index.php?p=catat_meter">
+                                    <a class="nav-link" href="index.php?p=meter_petugas">
                                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fa-spin text-success"></i></div>
                                         Catat Meter
                                     </a>
@@ -145,6 +145,10 @@ $level = $dt_user[2];
                             } elseif ($e[1] == "catat_meter" || $e[1] == "meter_edit&no") {
                                 $h1 = "Catat Meteran Warga";
                                 $li = "Pencatatatan Meteran Air Warga";
+                            }
+                            elseif ($e[1] == "meter_petugas") {
+                                $h1 = "Pencatatan Meteran";
+                                $li = "Pencatatatan Meteran Air Petugas";
                             }
                         }
                         else {
@@ -952,6 +956,56 @@ $level = $dt_user[2];
                                             }
                                         }
                                                 echo "</tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card mb-4" id="meter_petugas">
+                            <div class="card-header">
+                                <i class="fa-solid fa-users fa-rupiah-sign me-2 fa-fade"></i>
+                                Data Meter Warga
+                            </div>
+                            <div class="card-body">
+                                <table id="tabel_meter_petugas">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Warga</th>
+                                            <th>Tipe</th>
+                                            <th>Tanggal & Waktu</th>
+                                            <th>Meter Awal (m<sup>3</sup>)</th>
+                                            <th>Meter Akhir (m<sup>3</sup>)</th>
+                                            <th>Pemakaian (m<sup>3</sup>)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $q = mysqli_query($koneksi, "SELECT no, username, meter_awal, meter_akhir, pemakaian, tgl, waktu FROM pemakaian ORDER BY tgl DESC, username ASC");
+                                        while ($d = mysqli_fetch_row($q)) {
+                                            $no = $d[0];
+                                            $dt_user2 = $air->dt_user($d[1]);
+                                            $nama = $dt_user2[0];
+                                            $tipe = $dt_user2[2];
+                                            $meter_awal = $d[2];
+                                            $meter_akhir = $d[3];
+                                            $pemakaian = $d[4];
+                                            $tgl = $air->tgl_walik($d[5]);
+                                            $waktu = $d[6];
+
+                                            $tgl_tabel = date_create($d[5]);
+                                            $tgl_sekarang = date_create();
+                                            $diff = date_diff($tgl_tabel, $tgl_sekarang);
+                                            $selisih = $diff->days;
+
+                                            echo "<tr>";
+                                            echo "<td>$nama</td>";
+                                            echo "<td>$tipe</td>";
+                                            echo "<td>$tgl $waktu | $selisih hari</td>";
+                                            echo "<td>$meter_awal</td>";
+                                            echo "<td>$meter_akhir</td>";
+                                            echo "<td>$pemakaian</td>";
+                                            echo "</tr>";
                                         }
                                         ?>
                                     </tbody>
