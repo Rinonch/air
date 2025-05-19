@@ -162,22 +162,8 @@ $(document).ready(function () {
 
         // Tambahkan tombol Tarif setelah DataTables selesai diinisialisasi
         dataTable.on('datatable.init', function () {
-            if (e[1] !== "user") { // Hanya tambahkan tombol Tarif jika bukan di halaman Data User
+            if (e[1] === "manajemen_tarif") {
                 $(".datatable-dropdown").prepend("<button type='button' class='btn btn-outline-success float-start me-2'><i class='fa-solid fa-money-bill-1-wave'></i> Tarif</button>");
-            }
-        });
-
-        // Tambahkan tombol Meter setelah DataTables selesai diinisialisasi
-        dataTable.on('datatable.init', function () {
-            if (e[1] === "catat_meter") { // Khusus untuk halaman Catat Meter
-                // Hilangkan tombol Tarif jika ada
-                $(".btn-outline-success:contains('Tarif')").remove();
-                // Tambahkan tombol Meter jika belum ada
-                if ($(".btn-catat-meter").length === 0) {
-                    $(".datatable-dropdown").prepend(
-                        "<button type='button' class='btn btn-outline-success float-start me-2 btn-catat-meter'><i class='fa-solid fa-square-plus'></i> Meter</button>"
-                    );
-                }
             }
         });
     }
@@ -197,18 +183,6 @@ $(document).ready(function () {
         $("#modal-input-tarif-id").val(kd_tarif); // Set nilai input hidden untuk form
     });
 
-    // Tombol Meter untuk menampilkan form tambah meter (khusus catat_meter)
-    $(document).on("click", ".btn-catat-meter", function () {
-        // Reset form input dan textarea
-        $("#meter_form input, #meter_form textarea").val("");
-        // Tampilkan form catat meter
-        $("#meter_form").show();
-        // Sembunyikan list catat meter
-        $("#meter_list, #tarif_add").hide();
-        // Tampilkan meter add
-        $("#meter_add").show();
-        
-    });
 
     $(document).on("click", "button[data-bs-target='#hapusMeterModal']", function () {
         const no = $(this).data("no");

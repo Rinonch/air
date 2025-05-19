@@ -512,7 +512,8 @@ $level = $dt_user[2];
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>Tanggal</th>
+                                                <th>Waktu Pencatatan Meter</th>
+                                                <th>Kode Tarif</th>
                                                 <th>Meter Awal</th>
                                                 <th>Meter Akhir</th>
                                                 <th>Pemakaian (m<sup>3</sup>)</th>
@@ -522,17 +523,18 @@ $level = $dt_user[2];
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $q = mysqli_query($koneksi, "SELECT tgl, meter_awal, meter_akhir, pemakaian, tagihan, status FROM pemakaian WHERE username='$username' ORDER BY tgl DESC");
+                                        $q = mysqli_query($koneksi, "SELECT tgl, waktu, kd_tarif, meter_awal, meter_akhir, pemakaian, tagihan, status FROM pemakaian WHERE username='$username' ORDER BY tgl DESC");
                                         while ($d = mysqli_fetch_row($q)) {
                                             echo "<tr>";
-                                            echo "<td>".$air->tgl_walik($d[0])."</td>";
-                                            echo "<td>".$d[1]."</td>";
+                                            echo "<td>".$air->tgl_walik($d[0])." ".$d[1]."</td>";
                                             echo "<td>".$d[2]."</td>";
                                             echo "<td>".$d[3]."</td>";
-                                            echo "<td>".number_format($d[4],0,',','.')."</td>";
+                                            echo "<td>".$d[4]."</td>";
+                                            echo "<td>".$d[5]."</td>";
+                                            echo "<td>".number_format($d[6],0,',','.')."</td>";
 
                                             // Status dengan badge warna
-                                            if (strtoupper($d[5]) == "LUNAS") {
+                                            if (strtoupper($d[7]) == "LUNAS") {
                                                 echo "<td><span class='btn btn-success btn-sm'>LUNAS</span></td>";
                                             } else {
                                                 echo "<td><span class='btn btn-danger btn-sm'>BLM LUNAS</span></td>";
@@ -891,10 +893,11 @@ $level = $dt_user[2];
                                 Data Meter Warga
                             </div>
                             <div class="card-body">
-                                <table id="tabel_meter">
+                                <table id="tabel_meter" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>Nama Warga</th>
+                                            <th>Tipe</th>
                                             <th>Tanggal & Waktu</th>
                                             <th>Meter Awal (m<sup>3</sup>)</th>
                                             <th>Meter Akhir (m<sup>3</sup>)</th>
@@ -904,14 +907,14 @@ $level = $dt_user[2];
                                             <th></th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         <?php
                                         $q = mysqli_query($koneksi, "SELECT no, username, meter_awal, meter_akhir, pemakaian, tgl, waktu, status FROM pemakaian ORDER BY tgl DESC, username ASC");
                                         while ($d = mysqli_fetch_row($q)) {
                                             $no = $d[0];
-                                            $dt_user2 = $air->dt_user($d[1]); 
+                                            $dt_user2 = $air->dt_user($d[1]);
                                             $nama = $dt_user2[0];
+                                            $tipe = $dt_user2[2];
                                             $meter_awal = $d[2];
                                             $meter_akhir = $d[3];
                                             $pemakaian = $d[4];
@@ -920,18 +923,24 @@ $level = $dt_user[2];
                                             $status = $d[7];
                                             $level_login = $dt_user[2];
 
+                                            // Hitung selisih hari
                                             $tgl_tabel = date_create($d[5]);
                                             $tgl_sekarang = date_create();
                                             $diff = date_diff($tgl_tabel, $tgl_sekarang);
                                             $selisih = $diff->days;
 
+                                            // Ambil tarif sesuai user
+                                            $kd_tarif = $air->user_to_idtarif($d[1]);
+                                            $tarif = $air->kdtarif_to_tarif($kd_tarif);
+
                                             echo "<tr>";
                                             echo "<td>$nama</td>";
-                                            echo "<td>$tgl $waktu |  ".date("Y-m-d")." $selisih hari</td>";
+                                            echo "<td>$tipe</td>";
+                                            echo "<td>$tgl $waktu | $selisih hari</td>";
                                             echo "<td>$meter_awal</td>";
                                             echo "<td>$meter_akhir</td>";
                                             echo "<td>$pemakaian</td>";
-                                            echo "<td>".number_format($d[4] * $tarif, 0, ',', '.')."</td>";
+                                            echo "<td>".number_format($tarif * $pemakaian, 0, ',', '.')."</td>";
                                             echo "<td>";
                                             if (strtoupper($status) == "LUNAS") {
                                                 echo "<span class='btn btn-success btn-sm'>LUNAS</span>";
@@ -940,22 +949,23 @@ $level = $dt_user[2];
                                             }
                                             echo "</td>";
 
+                                            // Tombol aksi
                                             if($level_login == "admin" || $level_login == "bendahara") {
-                                                echo"<td>
-                                                    <a href=index.php?p=meter_edit&no=$no><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
+                                                echo "<td>
+                                                    <a href='index.php?p=meter_edit&no=$no'><button type='button' class='btn btn-outline-success btn-sm'>Ubah</button></a>
                                                     <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusMeterModal' data-no='$no'>Hapus</button>
                                                 </td>";
-                                            }else {
+                                            } else {
                                                 if($selisih <= 30) {
-                                                echo"<td>
-                                                    <a href=index.php?p=meter_edit&no=$no><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
-                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusMeterModal' data-no='$no'>Hapus</button>
-                                                </td>";
-                                            }else {
-                                                echo "<td></td>";
+                                                    echo "<td>
+                                                        <a href='index.php?p=meter_edit&no=$no'><button type='button' class='btn btn-outline-success btn-sm'>Ubah</button></a>
+                                                        <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#hapusMeterModal' data-no='$no'>Hapus</button>
+                                                    </td>";
+                                                } else {
+                                                    echo "<td></td>";
+                                                }
                                             }
-                                        }
-                                                echo "</tr>";
+                                            echo "</tr>";
                                         }
                                         ?>
                                     </tbody>
