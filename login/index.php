@@ -618,18 +618,19 @@ $level = $dt_user[2];
                                         <input type="text" class="form-control" id="meter_akhir" name="meter_akhir" value="<?php echo $meter_akhir ?>" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Status Tagihan:</label><br>
+                                    <label for="status" class="form-label">Status:</label>
+                                    <select class="form-select" name="status">
+                                        <option value="">Status</option>
                                         <?php
-                                        $st = array("LUNAS", "BLM LUNAS");
-                                        foreach ($st as $st2) {
-                                            $checked = ($status == $st2) ? "checked" : "";
-                                            echo "<div class=\"form-check form-check-inline\">
-                                                    <input type='radio' class='form-check-input' id='status_$st2' name='status' value='$st2' $checked>
-                                                    <label class='form-check-label' for='status_$st2'>$st2</label>
-                                                </div>";
+                                        $s = array("LUNAS", "BELUM LUNAS");
+                                        foreach ($s as $s2) {
+                                            if ($status == $s2) $sel = "SELECTED";
+                                            else $sel = "";
+                                            echo "<option value='$s2' $sel>$s2</option>";
                                         }
                                         ?>
-                                    </div>
+                                    </select>
+                                </div>
                                     <div class="mt-3">
                                         <button type="submit" class="btn btn-primary" name="tombol" value="<?php echo (isset($_GET['p']) && $_GET['p'] == "meter_edit") ? "meter_edit" : "meter_add"; ?>">
                                             Simpan
