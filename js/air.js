@@ -113,11 +113,11 @@ $(document).ready(function () {
 
         // Event tombol tambah meter
         $(document).on("click", ".btn-catat-meter-add", function () {
-            $("#catat_meter_form input, #catat_meter_form textarea").val("");
-            $("#catat_meter_form").show();
-            $("#catat_meter_list").hide();
-            $("#meter_list").hide();         // Sembunyikan meter_list
-            $("#meter_petugas").hide();      // Sembunyikan meter_petugas
+            $("#meter_add input, #meter_add textarea").val(""); // Kosongkan input di meter_add
+            $("#meter_add").show();         // Tampilkan form tambah meter
+            $("#meter_list").hide();        // Sembunyikan daftar meter
+            $("#catat_meter_form").hide();  // Sembunyikan form lama jika ada
+            $("#meter_petugas").hide();     // Sembunyikan form petugas jika ada
         });
 
         // Event tombol batal tambah meter
@@ -179,19 +179,26 @@ $(document).ready(function () {
         // Tambahkan tombol Tarif setelah DataTables selesai diinisialisasi
         dataTable.on('datatable.init', function () {
             if (e[1] === "manajemen_tarif") {
-                $(".datatable-dropdown").prepend("<button type='button' class='btn btn-outline-success float-start me-2'><i class='fa-solid fa-money-bill-1-wave'></i> Tarif</button>");
+                $(".datatable-dropdown").prepend("<button type='button' class='btn btn-outline-success float-start me-2 btn-tambah-tarif'><i class='fa-solid fa-money-bill-1-wave'></i> Tarif</button>");
             }
         });
     }
 
     // Tombol Tarif untuk menampilkan form tambah tarif
-    $(document).on("click", ".btn-outline-success", function () {
-        // console.log("Tombol Tarif diklik!");
-        if (e[1] !== "user") {
+    $(document).on("click", ".btn-tambah-tarif", function () {
         $("#tarif_list").hide();
         $("#tarif_add").show();
-    }
     });
+
+    // Tombol Meter untuk menampilkan form tambah meter (khusus admin di catat_meter)
+    $(document).on("click", ".btn-catat-meter-add", function () {
+        $("#catat_meter_form input, #catat_meter_form textarea").val("");
+        $("#catat_meter_form").show();
+        $("#catat_meter_list").hide();
+        $("#meter_list").hide();
+        $("#meter_petugas").hide();
+    });
+
 
     $(document).on("click", "button[data-bs-target='#hapusTarifModal']", function () {
         const kd_tarif = $(this).data("tarif");
