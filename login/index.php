@@ -371,7 +371,7 @@ $level = $dt_user[2];
                                 $meter_akhir = $_POST['meter_akhir'];
                                 $kd_tarif = $air->user_to_idtarif($username);
                                 $tarif = $air->kdtarif_to_tarif($kd_tarif);
-                                $status = isset($_POST['status']) ? $_POST['status'] : 'BLM LUNAS';
+                                $status = isset($_POST['status']) ? $_POST['status'] : 'BELUM LUNAS';
 
                                 $pemakaian = $meter_akhir - $meter_awal;
                                 $tagihan = $tarif * $pemakaian;
@@ -402,7 +402,7 @@ $level = $dt_user[2];
                                 $no = $_POST['no'];
                                 $meter_awal = $_POST['meter_awal'];
                                 $meter_akhir = $_POST['meter_akhir'];
-                                $status = isset($_POST['status']) ? $_POST['status'] : 'BLM LUNAS';
+                                $status = isset($_POST['status']) ? $_POST['status'] : 'BELUM LUNAS';
 
                                 $q = mysqli_query($koneksi, "SELECT username, kd_tarif FROM pemakaian WHERE no='$no'");
                                 $d = mysqli_fetch_row($q);
@@ -537,7 +537,7 @@ $level = $dt_user[2];
                                             if (strtoupper($d[7]) == "LUNAS") {
                                                 echo "<td><span class='btn btn-success btn-sm'>LUNAS</span></td>";
                                             } else {
-                                                echo "<td><span class='btn btn-danger btn-sm'>BLM LUNAS</span></td>";
+                                                echo "<td><span class='btn btn-danger btn-sm'>BELUM LUNAS</span></td>";
                                             }
                                             echo "</tr>";
                                         }
@@ -946,7 +946,7 @@ $level = $dt_user[2];
                                             if (strtoupper($status) == "LUNAS") {
                                                 echo "<span class='btn btn-success btn-sm'>LUNAS</span>";
                                             } else {
-                                                echo "<span class='btn btn-danger btn-sm'>BLM LUNAS</span>";
+                                                echo "<span class='btn btn-danger btn-sm'>BELUM LUNAS</span>";
                                             }
                                             echo "</td>";
 
