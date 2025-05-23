@@ -537,7 +537,7 @@ $level = $dt_user[2];
                                             if (strtoupper($d[7]) == "LUNAS") {
                                                 echo "<td><span class='btn btn-success btn-sm'>LUNAS</span></td>";
                                             } else {
-                                                echo "<td><span class='btn btn-danger btn-sm'>BELUM LUNAS</span></td>";
+                                                echo "<td><span class='btn btn-danger btn-sm'>BELUM LUNAS</span></td>"; 
                                             }
                                             echo "</tr>";
                                         }
@@ -830,7 +830,7 @@ $level = $dt_user[2];
                                             echo "<td>$status</td>";
                                             echo "<td>
                                                     <a href=index.php?p=user_edit&user=$user><button type=button class='btn btn-outline-success btn-sm'>Ubah</button></a>
-                                                    <button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-user=$user>Hapus</button>
+<button type='button' class='btn btn-outline-danger btn-sm' data-bs-toggle='modal' data-bs-target='#myModal' data-user=$user>Hapus</button>
                                                 </td>";
                                             echo "</tr>";
                                         }

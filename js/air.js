@@ -37,12 +37,18 @@ $(document).ready(function () {
             $("#user_form input, #user_form textarea").val("");
         });
 
-        $("button[data-bs-toggle='modal']").click(function () {
-            console.log("Tombol hapus diklik!");
-            const user = $(this).attr("data-user");
-            $("#myModal .modal-body").text("Yakin hapus data username: " + user + " ?");
-            $(".modal-footer form").append("<input type='hidden' name='username' value='" + user + "'>");
-        });
+$(document).ready(function () {
+    // ... existing code ...
+
+    // Updated delete user button click handler
+    $(document).on("click", "button.btn-outline-danger[data-bs-target='#myModal'][data-user]", function () {
+        const user = $(this).attr("data-user");
+        $("#modal-username").text(user);
+        $("#modal-input-username").val(user);
+    });
+
+    // ... existing code ...
+});
     }
 
     // Logika untuk halaman Pemakaian Sendiri Warga
