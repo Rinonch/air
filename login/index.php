@@ -166,40 +166,66 @@ $level = $dt_user[2];
                         //session_destroy();
                         //echo "<br> Setelah session destroy: sesi user: " . $_SESSION['user']."sesi pass: ".$_SESSION['pass'];
                         ?>
+                        <div class="row mb-3" id="pilih_waktu">
+                            <div class="col-xl-3 col-md-12">
+                            <label for="sel1" class="form-label">Pilih Waktu:</label>
+                            <select class="form-select" id="sel1" name="pilih_waktu">
+                            <option value="">Bulan</option>
+                            <?php
+                            for ($i = 1; $i <= 12; $i++) {
+                                if ($i < 10) $i = '0' . $i; // Tambahkan nol di depan untuk bulan 1-9
+                                echo "<option value=\"" . date("Y") . "-" . $i . "\">" . $air->bln($i) . " " . date("Y") . "</option>";
+                            }
+                            ?>
+                            </select>
+                            </div>
+                        </div>
                         <div class="row" id="summary">
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Primary Card</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3"> orang</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Pelanggan</i></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Warning Card</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">m<sup>3</sup></div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Pemakaian Air</i></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">Success Card</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">warga</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Sudah Dicatat</i></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">Danger Card</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">warga</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Belum Dicatat</i></div>
                                     </div>
                                 </div>
                             </div>

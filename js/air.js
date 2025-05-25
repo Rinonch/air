@@ -11,6 +11,33 @@ $(document).ready(function () {
 
     // Sembunyikan semua elemen terlebih dahulu
     $("#user_add, #user_list, #tarif_add, #tarif_list, #meter_petugas").hide();
+    $("#pilih_waktu select[name='pilih_waktu']").on("change", function () {
+            const bln = $(this).val();
+            console.log("Bulan yang dipilih: " + bln);
+            // Tambahkan logika untuk mengupdate chart berdasarkan waktu yang dipilih
+            
+            $.ajax({
+                type: "post",
+                url: "../assets/ajax.php",
+                data: {p:"summary", t:bln},
+                dataType: "json"
+            })
+            .done(function (d) {
+                console.log("Data: " +d[0].jml_pelanggan);
+                blm_dicatat = d[0].jml_pelanggan - d[2].tercatat;
+                $("#summary .bg-primary h1").text(d[0].jml_pelanggan);
+                $("#summary .bg-warning h1").text(d[1].pemakaian);
+                $("#summary .bg-success h1").text(d[2].tercatat);
+                $("#summary .bg-danger h1").text(d[2].blm_dicatat);
+
+            })
+            .fail(function () {
+                console.log("Gagal mengambil data untuk bulan: " + bln);
+            
+            });
+            
+
+        });
 
     // Logika untuk halaman Manajemen User
     if (e[1] === "user" || e[1] === "user_edit&user") {
