@@ -230,6 +230,106 @@ $level = $dt_user[2];
                                 </div>
                             </div>
                         </div>
+                        <div class="row" id="summary_bendahara">
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-primary text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3"> orang</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Pelanggan</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-warning text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">Rp</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Pemasukan</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-success text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">warga</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Sudah Lunas</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-danger text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">warga</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Belum Dibayar</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="summary_warga">
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-primary text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3"><?php echo date("H:i:s")?></div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Waktu Pencatatan</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-warning text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">m<sup>3</sup></div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Pemakaian Air</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-success text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3">Rp</div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Tagihan</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-danger text-white mb-4">
+                                    <div class="card-body d-flex justify-content-center">
+                                        <h1></h1> 
+                                        <div class="ms-3"></div>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-center">
+                                        <!-- <a class="small text-white stretched-link" href="#">View Details</a> -->
+                                        <div class="small text-white">Status Tagihan</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row" id="chart">
                             <div class="col-xl-6">
                                 <div class="card mb-4">

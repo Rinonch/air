@@ -10,41 +10,94 @@ $(document).ready(function () {
     }
 
     // Sembunyikan semua elemen terlebih dahulu
-    $("#user_add, #user_list, #tarif_add, #tarif_list, #meter_petugas").hide();
+    $("#summary, #chart, #user_add, #user_list, #tarif_add, #tarif_list, #meter_petugas").hide();
+
+    // Get user level from body data attribute or other source
+    var userLevel = $("body").data("level") || "";
+
+    // Show/hide summary sections based on user level
+    if (userLevel === "bendahara") {
+        $("#summary, #summary_warga").hide();
+        $("#summary_bendahara, #chart").show();
+        window.isBendaharaDashboard = true;
+    } else if (userLevel === "warga") {
+        $("#summary").hide();
+        $("#summary_bendahara").hide();
+        $("#summary_warga, #chart").show();
+        window.isWargaDashboard = true;
+        window.isBendaharaDashboard = false;
+    } else {
+        $("#summary, #chart").show();
+        $("#summary_bendahara").hide();
+        $("#summary_warga").hide();
+        window.isBendaharaDashboard = false;
+        window.isWargaDashboard = false;
+    }
+
     $("#pilih_waktu select[name='pilih_waktu']").on("change", function () {
-            const bln = $(this).val();
-            console.log("Bulan yang dipilih: " + bln);
-            // Tambahkan logika untuk mengupdate chart berdasarkan waktu yang dipilih
-            
+        const bln = $(this).val();
+        console.log("Bulan yang dipilih: " + bln);
+
+        // Tambahkan logika untuk mengupdate chart berdasarkan waktu yang dipilih
+        if (window.isBendaharaDashboard) {
             $.ajax({
                 type: "post",
-                url: "../assets/ajax.php",
-                data: {p:"summary", t:bln},
+                url: "../assets/ajax2.php",
+                data: { p: "summary_bendahara", t: bln },
                 dataType: "json"
             })
             .done(function (d) {
-                console.log("Data: " +d[0].jml_pelanggan);
+                $("#summary_bendahara .bg-primary h1").text(d.total_payers || 0);
+                $("#summary_bendahara .bg-warning h1").text(d.total_income ? d.total_income.toLocaleString('id-ID') : 0);
+                $("#summary_bendahara .bg-success h1").text(d.fully_paid || 0);
+                $("#summary_bendahara .bg-danger h1").text(d.unpaid || 0);
+            })
+            .fail(function () {
+                console.log("Gagal mengambil data bendahara untuk bulan: " + bln);
+            });
+        } else if (window.isWargaDashboard) {
+            $.ajax({
+                type: "post",
+                url: "../assets/ajax3.php",
+                data: { p: "summary_warga", t: bln },
+                dataType: "json"
+            })
+            .done(function (d) {
+                $("#summary_warga .bg-primary h1").text(d.waktu_pencatatan || '');
+                $("#summary_warga .bg-warning h1").text(d.pemakaian_air || 0);
+                $("#summary_warga .bg-success h1").text(d.total_tagihan || 0);
+                $("#summary_warga .bg-danger h1").text(d.status_tagihan || '');
+            })
+            .fail(function () {
+                console.log("Gagal mengambil data bendahara untuk bulan: " + bln);
+            });
+        } else {
+            $.ajax({
+                type: "post",
+                url: "../assets/ajax.php",
+                data: { p: "summary", t: bln },
+                dataType: "json"
+            })
+            .done(function (d) {
+                console.log("Data: " + d[0].jml_pelanggan);
                 blm_dicatat = d[0].jml_pelanggan - d[2].tercatat;
                 $("#summary .bg-primary h1").text(d[0].jml_pelanggan);
                 $("#summary .bg-warning h1").text(d[1].pemakaian);
                 $("#summary .bg-success h1").text(d[2].tercatat);
                 $("#summary .bg-danger h1").text(blm_dicatat);
-
             })
             .fail(function () {
                 console.log("Gagal mengambil data untuk bulan: " + bln);
-            
             });
-            
-
-        });
+        }
+    });
 
     // Logika untuk halaman Manajemen User
     if (e[1] === "user" || e[1] === "user_edit&user") {
         $("#user_list").show();
 
         if (e[1] === "user") {
-            $("#summary, #chart, #pilih_waktu").hide();
+            $("#summary, #chart, #pilih_waktu, #summary_bendahara").hide();
         } else {
             $("#summary, #chart, #user_list").hide();
             $("#user_add").show();
@@ -81,12 +134,12 @@ $(document).ready(function () {
     // Logika untuk halaman Pemakaian Sendiri Warga
     else if (e[1] === "pemakaian_sendiri") {
         $("#tagihan_sendiri").show(); // Tampilkan tabel tarif
-        $("#summary, #chart, #pilih_waktu").hide(); // Sembunyikan elemen summary dan chart
+        $("#summary, #chart, #pilih_waktu, #summary_bendahara, #summary_warga").hide(); // Sembunyikan elemen summary dan chart
     }
 
     // Logika untuk halaman Manajemen Tarif
     else if (e[1] === "manajemen_tarif") {
-        $("#tarif_add, #pilih_waktu").hide(); // Sembunyikan form tambah tarif
+        $("#tarif_add, #pilih_waktu, #summary_bendahara").hide(); // Sembunyikan form tambah tarif
         $("#tarif_list").show(); // Tampilkan tabel tarif
         $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
 
@@ -103,7 +156,7 @@ $(document).ready(function () {
     // Logika untuk halaman Tarif Edit
     else if (e[1] && e[1].startsWith("tarif_edit")) {
         $("#tarif_add").show(); // Tampilkan form tambah/edit tarif
-        $("#tarif_list, #pilih_waktu").hide(); // Sembunyikan tabel tarif
+        $("#tarif_list, #pilih_waktu, #summary_bendahara").hide(); // Sembunyikan tabel tarif
         $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
         $("#tarif_form button").val("tarif_edit");
         $("#tarif_form input[name='kd_tarif']").attr("disabled", true);
@@ -116,7 +169,7 @@ $(document).ready(function () {
     // Logika untuk halaman Catat Meter
     else if (e[1] === "catat_meter") {
         // Sembunyikan summary dan chart
-        $("#summary, #chart, #pilih_waktu").hide();
+        $("#summary, #chart, #pilih_waktu, #summary_bendahara").hide();
 
         // Tampilkan form catat meter jika ada
         $("#meter_form").show();
@@ -163,11 +216,11 @@ $(document).ready(function () {
     // Logika untuk halaman Catat Meter atau Edit Meter
     else if (e[1] === "catat_meter" || e[1] === "meter_edit&no") {
         // Sembunyikan semua elemen utama
-        $("#summary, #chart, #user_add, #user_list, #tarif_add, #tarif_list, #pilih_waktu").hide();
+        $("#summary, #chart, #user_add, #user_list, #tarif_add, #tarif_list, #pilih_waktu, #summary_bendahara").hide();
 
         if (e[1] === "catat_meter") {
             // Sembunyikan summary dan chart, tampilkan form tambah meter
-            $("#meter_add, #pilih_waktu").hide();
+            $("#meter_add, #pilih_waktu, #summary_bendahara").hide();
             $("#meter_list").show();
         } else {
             // Untuk halaman edit meter
@@ -249,7 +302,7 @@ $(document).ready(function () {
     // Logika untuk halaman Meter Petugas
     if (e[1] === "meter_petugas") {
         // Sembunyikan elemen lain
-        $("#tarif_add, #tarif_list, #summary, #chart, #meter_list, #meter_add, #meter_form, #pilih_waktu").hide();
+        $("#tarif_add, #tarif_list, #summary, #chart, #meter_list, #meter_add, #meter_form, #pilih_waktu, #summary_bendahara").hide();
 
         // Tampilkan tabel khusus petugas
         $("#meter_petugas").show();
