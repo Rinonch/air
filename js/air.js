@@ -28,7 +28,7 @@ $(document).ready(function () {
                 $("#summary .bg-primary h1").text(d[0].jml_pelanggan);
                 $("#summary .bg-warning h1").text(d[1].pemakaian);
                 $("#summary .bg-success h1").text(d[2].tercatat);
-                $("#summary .bg-danger h1").text(d[2].blm_dicatat);
+                $("#summary .bg-danger h1").text(blm_dicatat);
 
             })
             .fail(function () {
@@ -44,7 +44,7 @@ $(document).ready(function () {
         $("#user_list").show();
 
         if (e[1] === "user") {
-            $("#summary, #chart").hide();
+            $("#summary, #chart, #pilih_waktu").hide();
         } else {
             $("#summary, #chart, #user_list").hide();
             $("#user_add").show();
@@ -81,12 +81,12 @@ $(document).ready(function () {
     // Logika untuk halaman Pemakaian Sendiri Warga
     else if (e[1] === "pemakaian_sendiri") {
         $("#tagihan_sendiri").show(); // Tampilkan tabel tarif
-        $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
+        $("#summary, #chart, #pilih_waktu").hide(); // Sembunyikan elemen summary dan chart
     }
 
     // Logika untuk halaman Manajemen Tarif
     else if (e[1] === "manajemen_tarif") {
-        $("#tarif_add").hide(); // Sembunyikan form tambah tarif
+        $("#tarif_add, #pilih_waktu").hide(); // Sembunyikan form tambah tarif
         $("#tarif_list").show(); // Tampilkan tabel tarif
         $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
 
@@ -103,7 +103,7 @@ $(document).ready(function () {
     // Logika untuk halaman Tarif Edit
     else if (e[1] && e[1].startsWith("tarif_edit")) {
         $("#tarif_add").show(); // Tampilkan form tambah/edit tarif
-        $("#tarif_list").hide(); // Sembunyikan tabel tarif
+        $("#tarif_list, #pilih_waktu").hide(); // Sembunyikan tabel tarif
         $("#summary, #chart").hide(); // Sembunyikan elemen summary dan chart
         $("#tarif_form button").val("tarif_edit");
         $("#tarif_form input[name='kd_tarif']").attr("disabled", true);
@@ -116,7 +116,7 @@ $(document).ready(function () {
     // Logika untuk halaman Catat Meter
     else if (e[1] === "catat_meter") {
         // Sembunyikan summary dan chart
-        $("#summary, #chart").hide();
+        $("#summary, #chart, #pilih_waktu").hide();
 
         // Tampilkan form catat meter jika ada
         $("#meter_form").show();
@@ -163,11 +163,11 @@ $(document).ready(function () {
     // Logika untuk halaman Catat Meter atau Edit Meter
     else if (e[1] === "catat_meter" || e[1] === "meter_edit&no") {
         // Sembunyikan semua elemen utama
-        $("#summary, #chart, #user_add, #user_list, #tarif_add, #tarif_list").hide();
+        $("#summary, #chart, #user_add, #user_list, #tarif_add, #tarif_list, #pilih_waktu").hide();
 
         if (e[1] === "catat_meter") {
             // Sembunyikan summary dan chart, tampilkan form tambah meter
-            $("#meter_add").hide();
+            $("#meter_add, #pilih_waktu").hide();
             $("#meter_list").show();
         } else {
             // Untuk halaman edit meter
@@ -249,7 +249,7 @@ $(document).ready(function () {
     // Logika untuk halaman Meter Petugas
     if (e[1] === "meter_petugas") {
         // Sembunyikan elemen lain
-        $("#tarif_add, #tarif_list, #summary, #chart, #meter_list, #meter_add, #meter_form").hide();
+        $("#tarif_add, #tarif_list, #summary, #chart, #meter_list, #meter_add, #meter_form, #pilih_waktu").hide();
 
         // Tampilkan tabel khusus petugas
         $("#meter_petugas").show();
