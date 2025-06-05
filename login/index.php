@@ -331,22 +331,23 @@ $level = $dt_user[2];
                             </div>
                         </div>
                         <div class="row" id="chart">
+                            
                             <div class="col-xl-6">
                                 <div class="card mb-4">
                                     <div class="card-header">
-                                        <i class="fas fa-chart-area me-1"></i>
-                                        Area Chart Example
+                                        <i class="fas fa-chart-bar me-1"></i>
+                                        Grafik Pemakaian Air (m<sup>3</sup>)
                                     </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
                                 </div>
                             </div>
                             <div class="col-xl-6">
                                 <div class="card mb-4">
                                     <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Bar Chart Example
+                                        <i class="fas fa-chart-area me-1"></i>
+                                        Grafik Tagihan Air (Rp)
                                     </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
                                 </div>
                             </div>
                         </div>
